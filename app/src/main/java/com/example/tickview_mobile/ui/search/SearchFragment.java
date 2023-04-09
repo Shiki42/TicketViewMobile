@@ -73,7 +73,7 @@ public class SearchFragment extends Fragment {
 
     // Add this method in onViewCreated
     private void setupAutoComplete() {
-        autoCompleteAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
+        autoCompleteAdapter = new ArrayAdapter<>(requireContext(), R.layout.custom_dropdown_item);
         binding.keywordField.setAdapter(autoCompleteAdapter);
         binding.keywordField.setThreshold(3);
         binding.keywordField.setOnItemClickListener((parent, view, position, id) -> {
@@ -96,6 +96,7 @@ public class SearchFragment extends Fragment {
                             autoCompleteAdapter.clear();
                             autoCompleteAdapter.addAll(results);
                             autoCompleteAdapter.notifyDataSetChanged();
+                            autoCompleteAdapter.getFilter().filter(keyword);
                         }
 
                         @Override

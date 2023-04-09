@@ -2,6 +2,7 @@ package com.example.tickview_mobile.ui.search;
 import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.android.volley.Request;
@@ -99,7 +100,7 @@ public class VolleyService {
                             for (int i = 0; i < attractions.length(); i++) {
                                 results.add(attractions.getJSONObject(i).getString("name"));
                             }
-
+                            Log.d("AutoComplete", "Results: " + results);
                             callback.onSuccess(results);
                         }
                     } catch (Exception e) {

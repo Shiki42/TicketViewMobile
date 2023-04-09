@@ -37,6 +37,7 @@
                 android:id="@+id/keywordField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:dropDownHeight="wrap_content"
                 android:hint="Enter keyword" />
 
             <!-- Distance -->
