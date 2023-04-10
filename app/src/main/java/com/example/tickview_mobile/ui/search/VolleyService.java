@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.hsr.geohash.GeoHash;
 public class VolleyService {
 
     private final RequestQueue requestQueue;
@@ -27,11 +29,9 @@ public class VolleyService {
     }
 
     public interface FetchLocationCallback {
-        void onSuccess(Location location);
-
+        void onSuccess(String geohash);
         void onError(String message);
     }
-
     public interface AutoCompleteCallback {
         void onSuccess(List<String> results);
 
@@ -56,19 +56,23 @@ public class VolleyService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, response -> {
                     try {
-                        Location location = new Location("");
+                        double latitude;
+                        double longitude;
 
                         if (autoDetect) {
                             String[] loc = response.getString("loc").split(",");
-                            location.setLatitude(Double.parseDouble(loc[0]));
-                            location.setLongitude(Double.parseDouble(loc[1]));
+                            latitude = Double.parseDouble(loc[0]);
+                            longitude = Double.parseDouble(loc[1]);
                         } else {
                             JSONObject geometry = response.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location");
-                            location.setLatitude(geometry.getDouble("lat"));
-                            location.setLongitude(geometry.getDouble("lng"));
+                            latitude = geometry.getDouble("lat");
+                            longitude = geometry.getDouble("lng");
                         }
 
-                        callback.onSuccess(location);
+                        GeoHash geoHash = GeoHash.withBitPrecision(latitude, longitude, 9 * 5);
+                        String geohashString = geoHash.toBase32();
+                        callback.onSuccess(geohashString);
+
                     } catch (Exception e) {
                         callback.onError(e.getMessage());
                     }

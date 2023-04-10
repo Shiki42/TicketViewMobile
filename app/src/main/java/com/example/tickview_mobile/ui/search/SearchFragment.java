@@ -49,8 +49,7 @@ public class SearchFragment extends Fragment {
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
-            public void onSuccess(Location loc) {
-                String geoPoint = loc.getLatitude() + "," + loc.getLongitude();
+            public void onSuccess(String geoPoint) {
                 volleyService.searchEvent(keyword, distance, category, geoPoint, new VolleyService.SearchEventCallback() {
                     @Override
                     public void onSuccess(JSONObject response) {
