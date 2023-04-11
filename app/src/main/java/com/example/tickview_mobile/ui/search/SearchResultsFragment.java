@@ -23,4 +23,27 @@ public class SearchResultsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // Set up your RecyclerView or ListView here
     }
+
+    public void showProgressBar() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void updateSearchResults(List<Event> events) {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
+        RecyclerView recyclerView = getView().findViewById(R.id.search_result_recyclerview);
+        SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), events);
+        recyclerView.setAdapter(searchResultAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void showNoDataMessage() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
+        TextView noDataTextView = getView().findViewById(R.id.no_data_textview);
+        noDataTextView.setVisibility(View.VISIBLE);
+    }
 }

@@ -16,8 +16,13 @@ import com.example.tickview_mobile.R;
 
 import android.widget.ArrayAdapter;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import com.example.tickview_mobile.databinding.FragmentSearchFormBinding;
+import com.example.tickview_mobile.ui.search.SearchResultsFragment;
+import com.example.tickview_mobile.models.Event;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFormFragment extends Fragment {
@@ -47,6 +52,8 @@ public class SearchFormFragment extends Fragment {
         setupAutoComplete();
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
+        SearchResultFragment searchResultFragment = (SearchResultFragment) getParentFragmentManager().findFragmentById(R.id.fragment_search_result);
+        searchResultFragment.showProgressBar();
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
             public void onSuccess(String geoPoint) {
@@ -54,11 +61,16 @@ public class SearchFormFragment extends Fragment {
                     @Override
                     public void onSuccess(JSONObject response) {
                         // Handle the search event response
+                        Bundle args = new Bundle();
+                        args.putSerializable("response", response.toString());
+
+                        List<Event> events = parseEventsFromResponse(response);
+                        searchResultFragment.updateSearchResults(events);
                     }
 
                     @Override
                     public void onError(String message) {
-                        // Handle the error
+                        searchResultFragment.showNoDataMessage();
                     }
                 });
             }
@@ -70,6 +82,26 @@ public class SearchFormFragment extends Fragment {
         });
     }
 
+    public List<Event> parseEventsFromResponse(JSONObject response) {
+        List<Event> events = new ArrayList<>();
+        if (response.has("_embedded") && response.getJSONObject("_embedded").has("events")) {
+            JSONArray eventsArray = response.getJSONObject("_embedded").getJSONArray("events");
+            for (int i = 0; i < eventsArray.length(); i++) {
+                JSONObject eventJson = eventsArray.getJSONObject(i);
+                Event event = new Event();
+
+                event.setName(eventJson.getString("name"));
+                event.setImageUrl(eventJson.getJSONArray("images").getJSONObject(0).getString("url"));
+                event.setVenueName(eventJson.getJSONObject("_embedded").getJSONArray("venues").getJSONObject(0).getString("name"));
+                event.setDate(eventJson.getJSONObject("dates").getJSONObject("start").getString("localDate"));
+                event.setTime(eventJson.getJSONObject("dates").getJSONObject("start").getString("localTime"));
+                event.setSegmentName(eventJson.getJSONArray("classifications").getJSONObject(0).getJSONObject("segment").getString("name"));
+
+                events.add(event);
+            }
+        }
+        return events;
+    }
     // Add this method in onViewCreated
     private void setupAutoComplete() {
         autoCompleteAdapter = new ArrayAdapter<>(requireContext(), R.layout.custom_dropdown_item);
