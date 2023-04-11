@@ -66,7 +66,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             // Glide.with(context).load(event.getImageUrl()).into(eventImage);
 
             eventName.setText(event.getName());
-            eventDate.setText(event.getDates());
+            eventDate.setText(event.getDate());
             venueName.setText(event.getVenueName());
             eventTime.setText(event.getTime());
             eventCategory.setText(event.getSegmentName());

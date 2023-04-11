@@ -52,7 +52,7 @@ public class SearchFormFragment extends Fragment {
         setupAutoComplete();
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
-        SearchResultFragment searchResultFragment = (SearchResultFragment) getParentFragmentManager().findFragmentById(R.id.fragment_search_result);
+        SearchResultsFragment searchResultFragment = (SearchResultsFragment) getParentFragmentManager().findFragmentById(R.id.fragment_search_results);
         searchResultFragment.showProgressBar();
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
@@ -84,18 +84,18 @@ public class SearchFormFragment extends Fragment {
 
     public List<Event> parseEventsFromResponse(JSONObject response) {
         List<Event> events = new ArrayList<>();
-        if (response.has("_embedded") && response.getJSONObject("_embedded").has("events")) {
-            JSONArray eventsArray = response.getJSONObject("_embedded").getJSONArray("events");
+        if (response.has("_embedded") && response.optJSONObject("_embedded").has("events")) {
+            JSONArray eventsArray = response.optJSONObject("_embedded").optJSONArray("events");
             for (int i = 0; i < eventsArray.length(); i++) {
-                JSONObject eventJson = eventsArray.getJSONObject(i);
+                JSONObject eventJson = eventsArray.optJSONObject(i);
                 Event event = new Event();
 
-                event.setName(eventJson.getString("name"));
-                event.setImageUrl(eventJson.getJSONArray("images").getJSONObject(0).getString("url"));
-                event.setVenueName(eventJson.getJSONObject("_embedded").getJSONArray("venues").getJSONObject(0).getString("name"));
-                event.setDate(eventJson.getJSONObject("dates").getJSONObject("start").getString("localDate"));
-                event.setTime(eventJson.getJSONObject("dates").getJSONObject("start").getString("localTime"));
-                event.setSegmentName(eventJson.getJSONArray("classifications").getJSONObject(0).getJSONObject("segment").getString("name"));
+                event.setName(eventJson.optString("name"));
+                event.setImageUrl(eventJson.optJSONArray("images").optJSONObject(0).optString("url"));
+                event.setVenueName(eventJson.optJSONObject("_embedded").optJSONArray("venues").optJSONObject(0).optString("name"));
+                event.setDate(eventJson.optJSONObject("dates").optJSONObject("start").optString("localDate"));
+                event.setTime(eventJson.optJSONObject("dates").optJSONObject("start").optString("localTime"));
+                event.setSegmentName(eventJson.optJSONArray("classifications").optJSONObject(0).optJSONObject("segment").optString("name"));
 
                 events.add(event);
             }

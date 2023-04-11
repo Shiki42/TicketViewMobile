@@ -4,10 +4,20 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.databinding.FragmentSearchResultsBinding;
+import com.example.tickview_mobile.models.Event;
+
+import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
     private FragmentSearchResultsBinding binding;
