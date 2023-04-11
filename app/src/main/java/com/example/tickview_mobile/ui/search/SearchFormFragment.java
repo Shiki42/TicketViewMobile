@@ -13,18 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.tickview_mobile.R;
-import android.location.Location;
+
 import android.widget.ArrayAdapter;
 
 import org.json.JSONObject;
-import com.example.tickview_mobile.databinding.FragmentSearchBinding;
+import com.example.tickview_mobile.databinding.FragmentSearchFormBinding;
 import java.util.List;
 
-public class SearchFragment extends Fragment {
+public class SearchFormFragment extends Fragment {
     private VolleyService volleyService;
     private ArrayAdapter<String> autoCompleteAdapter;
 
-    private FragmentSearchBinding binding;
+    private FragmentSearchFormBinding binding;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class SearchFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        binding = FragmentSearchFormBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
     // ... onCreateView, onViewCreated ...
