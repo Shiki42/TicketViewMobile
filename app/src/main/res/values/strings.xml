@@ -2,4 +2,15 @@
     <string name="app_name">TickView-mobile</string>
     <string name="title_search">Search</string>
     <string name="title_favorites">Favorites</string>
+
+    <string-array name="category_spinner_options">
+        <item>Default</item>
+        <item>Music</item>
+        <item>Sports</item>
+        <item>Arts &amp; Theatre</item>
+        <item>Film</item>
+        <item>Miscellaneous</item>
+    </string-array>
+
 </resources>
+

@@ -15,11 +15,15 @@ import android.view.ViewGroup;
 import com.example.tickview_mobile.R;
 
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.example.tickview_mobile.databinding.FragmentSearchFormBinding;
-import com.example.tickview_mobile.ui.search.SearchResultsFragment;
 import com.example.tickview_mobile.models.Event;
 
 import java.util.ArrayList;
@@ -50,9 +54,30 @@ public class SearchFormFragment extends Fragment {
         // Your previous onViewCreated code...
 
         setupAutoComplete();
+
+        Spinner categorySpinner = view.findViewById(R.id.category_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.category_spinner_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+
+        Button searchButton = view.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the values from the form fields
+                String keyword = ((AutoCompleteTextView) view.findViewById(R.id.keywordField)).getText().toString();
+                int distance = Integer.parseInt(((EditText) view.findViewById(R.id.distance_input)).getText().toString());
+                String category = ((Spinner) view.findViewById(R.id.category_spinner)).getSelectedItem().toString();
+                String location = ((EditText) view.findViewById(R.id.location_input)).getText().toString();
+                boolean autoDetect = ((RadioButton) view.findViewById(R.id.auto_detect_location)).isChecked();
+
+                // Call the searchEvent function with the form values
+                searchEvent(keyword, distance, category, location, autoDetect);
+            }
+        });
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
-        SearchResultsFragment searchResultFragment = (SearchResultsFragment) getParentFragmentManager().findFragmentById(R.id.fragment_search_results);
+        SearchResultsFragment searchResultFragment = (SearchResultsFragment) getParentFragmentManager().findFragmentByTag("searchResultsFragment");
         searchResultFragment.showProgressBar();
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override

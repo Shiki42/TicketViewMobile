@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.tickview_mobile.ui.search.SearchFormFragment"
+        android:name="com.example.tickview_mobile.ui.search.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search_form" />
 

@@ -6,18 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.search.SearchFragment">
 
-    <fragment
-        android:id="@+id/fragment_search_form"
-        android:name="com.example.tickview_mobile.ui.search.SearchFormFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container_search_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_search_form" />
+        android:layout_height="match_parent" />
 
-    <fragment
-        android:id="@+id/fragment_search_results"
-        android:name="com.example.tickview_mobile.ui.search.SearchResultsFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container_search_results"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_search_results" />
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
