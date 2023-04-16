@@ -78,7 +78,6 @@ public class SearchFormFragment extends Fragment {
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
         SearchResultsFragment searchResultFragment = (SearchResultsFragment) getParentFragmentManager().findFragmentByTag("searchResultsFragment");
-        searchResultFragment.showProgressBar();
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
             public void onSuccess(String geoPoint) {
