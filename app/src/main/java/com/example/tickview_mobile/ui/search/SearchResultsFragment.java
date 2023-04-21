@@ -17,6 +17,7 @@ import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.databinding.FragmentSearchResultsBinding;
 import com.example.tickview_mobile.models.Event;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
@@ -32,11 +33,25 @@ public class SearchResultsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Set up your RecyclerView or ListView here
+        List<Event> events = getEventsFromArguments();
+        updateSearchResults(events);
     }
 
     public void showProgressBar() {
         ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private List<Event> getEventsFromArguments() {
+        List<Event> events = new ArrayList<>();
+        if (getArguments() != null) {
+            SearchResultsFragmentArgs args = SearchResultsFragmentArgs.fromBundle(getArguments());
+            Event[] eventsArray = args.getEvents();
+            if (eventsArray != null) {
+                events.addAll(Arrays.asList(eventsArray));
+            }
+        }
+        return events;
     }
 
     public void updateSearchResults(List<Event> events) {

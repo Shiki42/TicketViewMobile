@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -77,7 +79,6 @@ public class SearchFormFragment extends Fragment {
         });
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
-        SearchResultsFragment searchResultFragment = (SearchResultsFragment) getParentFragmentManager().findFragmentByTag("searchResultsFragment");
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
             public void onSuccess(String geoPoint) {
@@ -89,12 +90,14 @@ public class SearchFormFragment extends Fragment {
                         args.putSerializable("response", response.toString());
 
                         List<Event> events = parseEventsFromResponse(response);
-                        searchResultFragment.updateSearchResults(events);
+                        NavController navController = NavHostFragment.findNavController(SearchFormFragment.this);
+                        SearchResultsFragmentDirections.ActionNavigationSearchResults action =
+                                SearchResultsFragmentDirections.actionNavigationSearchResults(events.toArray(new Event[0]));
+                        navController.navigate(action);
                     }
 
                     @Override
                     public void onError(String message) {
-                        searchResultFragment.showNoDataMessage();
                     }
                 });
             }

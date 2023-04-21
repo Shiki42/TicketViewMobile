@@ -22,16 +22,5 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        SearchFormFragment searchFormFragment = new SearchFormFragment();
-        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-
-        getChildFragmentManager().beginTransaction()
-                .add(R.id.fragment_container_search_form, searchFormFragment, "searchFormFragment")
-                .add(R.id.fragment_container_search_results, searchResultsFragment, "searchResultsFragment")
-                .commit();
-
-        Log.d("SearchFragment", "SearchFormFragment: " + getChildFragmentManager().findFragmentByTag("searchFormFragment"));
-        Log.d("SearchFragment", "SearchResultsFragment: " + getChildFragmentManager().findFragmentByTag("searchResultsFragment"));
     }
 }

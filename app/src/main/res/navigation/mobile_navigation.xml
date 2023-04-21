@@ -16,4 +16,17 @@
         android:name="com.example.tickview_mobile.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites" />
+
+    <fragment
+        android:id="@+id/navigation_search_form"
+        android:name="com.example.tickview_mobile.ui.search.SearchFormFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search_form" />
+
+    <fragment
+        android:id="@+id/navigation_search_results"
+        android:name="com.example.tickview_mobile.ui.search.SearchResultsFragment"
+        android:label="@string/title_favorites"
+        tools:layout="@layout/fragment_search_results" />
+
 </navigation>
