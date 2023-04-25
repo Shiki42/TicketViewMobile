@@ -2,6 +2,7 @@
     <string name="app_name">TickView-mobile</string>
     <string name="title_search">Search</string>
     <string name="title_favorites">Favorites</string>
+    <string name="title_search_results">Search Results</string>
 
     <string-array name="category_spinner_options">
         <item>Default</item>

@@ -45,11 +45,7 @@ public class SearchResultsFragment extends Fragment {
     private List<Event> getEventsFromArguments() {
         List<Event> events = new ArrayList<>();
         if (getArguments() != null) {
-            SearchResultsFragmentArgs args = SearchResultsFragmentArgs.fromBundle(getArguments());
-            Event[] eventsArray = args.getEvents();
-            if (eventsArray != null) {
-                events.addAll(Arrays.asList(eventsArray));
-            }
+            events = getArguments().getParcelableArrayList("events");
         }
         return events;
     }
@@ -59,16 +55,19 @@ public class SearchResultsFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
 
         RecyclerView recyclerView = getView().findViewById(R.id.search_result_recyclerview);
-        SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), events);
-        recyclerView.setAdapter(searchResultAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
-
-    public void showNoDataMessage() {
-        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
-
         TextView noDataTextView = getView().findViewById(R.id.no_data_textview);
-        noDataTextView.setVisibility(View.VISIBLE);
+
+        if (events == null || events.isEmpty()) {
+            noDataTextView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            noDataTextView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
+            SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), events);
+            recyclerView.setAdapter(searchResultAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
     }
+
 }

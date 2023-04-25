@@ -1,15 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_search">
+    app:startDestination="@+id/navigation_search_form">
 
     <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.example.tickview_mobile.ui.search.SearchFragment"
+        android:id="@+id/navigation_search_form"
+        android:name="com.example.tickview_mobile.ui.search.SearchFormFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search_form" />
+        tools:layout="@layout/fragment_search_form">
+        <action
+            android:id="@+id/action_navigation_search_form_to_navigation_search_results"
+            app:destination="@+id/navigation_search_results" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_favorites"
@@ -18,15 +21,13 @@
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
-        android:id="@+id/navigation_search_form"
-        android:name="com.example.tickview_mobile.ui.search.SearchFormFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search_form" />
-
-    <fragment
         android:id="@+id/navigation_search_results"
         android:name="com.example.tickview_mobile.ui.search.SearchResultsFragment"
-        android:label="@string/title_favorites"
-        tools:layout="@layout/fragment_search_results" />
-
+        android:label="@string/title_search_results"
+        tools:layout="@layout/fragment_search_results">
+        <argument
+            android:name="events"
+            app:argType="com.example.tickview_mobile.models.Event[]"
+            app:nullable="true" />
+    </fragment>
 </navigation>

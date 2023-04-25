@@ -79,6 +79,7 @@ public class SearchFormFragment extends Fragment {
         });
     }
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
+        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
         volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
             @Override
             public void onSuccess(String geoPoint) {
@@ -86,18 +87,21 @@ public class SearchFormFragment extends Fragment {
                     @Override
                     public void onSuccess(JSONObject response) {
                         // Handle the search event response
-                        Bundle args = new Bundle();
-                        args.putSerializable("response", response.toString());
-
                         List<Event> events = parseEventsFromResponse(response);
-                        NavController navController = NavHostFragment.findNavController(SearchFormFragment.this);
-                        SearchResultsFragmentDirections.ActionNavigationSearchResults action =
-                                SearchResultsFragmentDirections.actionNavigationSearchResults(events.toArray(new Event[0]));
-                        navController.navigate(action);
+
+                        Bundle args = new Bundle();
+                        args.putParcelableArrayList("events", new ArrayList<>(events));
+                        searchResultsFragment.setArguments(args);
+
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.nav_host_fragment_activity_main, searchResultsFragment)
+                                .addToBackStack(null)
+                                .commit();
                     }
 
                     @Override
                     public void onError(String message) {
+                        // Handle the error
                     }
                 });
             }
