@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.models.Event;
 
@@ -64,7 +65,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             // Load event image using an image loading library like Glide or Picasso
             // Example with Glide:
             // Glide.with(context).load(event.getImageUrl()).into(eventImage);
-
+            Glide.with(context)
+                    .load(event.getImageUrl())
+                    //.placeholder(R.drawable.placeholder_image) // Replace with your placeholder image resource
+                    .into(eventImage);
             eventName.setText(event.getName());
             eventDate.setText(event.getDate());
             venueName.setText(event.getVenueName());

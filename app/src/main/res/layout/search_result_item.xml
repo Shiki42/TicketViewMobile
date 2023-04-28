@@ -40,7 +40,8 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Event Name" />
+                android:text="Event Name"
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:id="@+id/event_date"
@@ -50,7 +51,8 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Event Date" />
+                android:text="Event Date"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <LinearLayout
@@ -67,7 +69,8 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Venue Name" />
+                android:text="Venue Name"
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:id="@+id/event_time"
@@ -77,7 +80,8 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Event Time" />
+                android:text="Event Time"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <LinearLayout
@@ -94,7 +98,8 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Category" />
+                android:text="Category"
+                android:textColor="#FFFFFF" />
 
             <ImageView
                 android:id="@+id/favorite_button"
