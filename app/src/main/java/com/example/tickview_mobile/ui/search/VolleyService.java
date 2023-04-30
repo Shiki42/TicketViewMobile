@@ -44,6 +44,26 @@ public class VolleyService {
         void onError(String message);
     }
 
+    public interface FetchEventDetailsCallback {
+        void onSuccess(JSONObject response);
+
+        void onError(String message);
+    }
+    public interface FetchVenueDetailsCallback {
+        void onSuccess(JSONObject response);
+
+        void onError(String message);
+    }
+    public interface FetchArtistDetailsCallback {
+        void onSuccess(JSONObject response);
+
+        void onError(String message);
+    }
+    public interface FetchArtistAlbumCallback {
+        void onSuccess(JSONObject response);
+
+        void onError(String message);
+    }
     public void fetchLocation(boolean autoDetect, String address, FetchLocationCallback callback) {
         String url;
 
@@ -110,6 +130,50 @@ public class VolleyService {
                     } catch (Exception e) {
                         callback.onError(e.getMessage());
                     }
+                }, error -> callback.onError(error.getMessage()));
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void fetchEventDetails(String eventId, FetchEventDetailsCallback callback) {
+        String url = ServerConfig.SERVER_URL + "/events/details?event_id=" + eventId;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    callback.onSuccess(response);
+                }, error -> callback.onError(error.getMessage()));
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void fetchVenueDetails(String venueId, FetchVenueDetailsCallback callback) {
+        String url = ServerConfig.SERVER_URL + "/venues?id=" + venueId;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    callback.onSuccess(response);
+                }, error -> callback.onError(error.getMessage()));
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void fetchArtistDetails(String artistName, FetchArtistDetailsCallback callback) {
+        String url = ServerConfig.SERVER_URL + "/artist?keyword=" + Uri.encode(artistName);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    callback.onSuccess(response);
+                }, error -> callback.onError(error.getMessage()));
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void fetchArtistAlbum(String artistId, FetchArtistAlbumCallback callback) {
+        String url = ServerConfig.SERVER_URL + "/artist/album?id=" + artistId;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    callback.onSuccess(response);
                 }, error -> callback.onError(error.getMessage()));
 
         requestQueue.add(jsonObjectRequest);

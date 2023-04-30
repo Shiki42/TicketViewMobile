@@ -1,5 +1,6 @@
 package com.example.tickview_mobile.ui.search;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.tickview_mobile.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DetailFragment extends Fragment {
+    private VolleyService volleyService;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -26,7 +33,7 @@ public class DetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        volleyService = new VolleyService(requireContext());
         // Set up the ActionBar
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -47,5 +54,89 @@ public class DetailFragment extends Fragment {
         // DetailViewPagerAdapter should extend FragmentStateAdapter
         DetailViewPagerAdapter detailViewPagerAdapter = new DetailViewPagerAdapter(this);
         detailViewPager.setAdapter(detailViewPagerAdapter);
+    }
+
+    private void fetchData(String eventId) {
+        volleyService.fetchEventDetails(eventId, new VolleyService.FetchEventDetailsCallback() {
+            @Override
+            public void onSuccess(JSONObject eventDetailData) {
+                String venueId = "";
+                try {
+                    JSONArray venues = eventDetailData.getJSONObject("_embedded").getJSONArray("venues");
+                    venueId = venues.getJSONObject(0).getString("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                volleyService.fetchVenueDetails(venueId, new VolleyService.FetchVenueDetailsCallback() {
+                    @Override
+                    public void onSuccess(JSONObject venueDataRes) {
+                        // Handle venue data here
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e("Error fetching venue details:", error);
+                        // Handle error here
+                    }
+                });
+
+                JSONArray attractions;
+                try {
+                    attractions = eventDetailData.getJSONObject("_embedded").getJSONArray("attractions");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    attractions = new JSONArray();
+                }
+
+                for (int i = 0; i < attractions.length(); i++) {
+                    try {
+                        JSONObject artist = attractions.getJSONObject(i);
+                        JSONArray classifications = artist.getJSONArray("classifications");
+                        String segmentName = classifications.getJSONObject(0).getJSONObject("segment").getString("name");
+
+                        if ("Music".equals(segmentName)) {
+                            String artistName = artist.getString("name");
+                            volleyService.fetchArtistDetails(artistName, new VolleyService.FetchArtistDetailsCallback() {
+                                @Override
+                                public void onSuccess(JSONObject artistResponse) {
+                                    try {
+                                        JSONObject firstResult = artistResponse.getJSONObject("artists").getJSONArray("items").getJSONObject(0);
+                                        if (firstResult != null) {
+                                            String artistId = firstResult.getString("id");
+                                            volleyService.fetchArtistAlbum(artistId, new VolleyService.FetchArtistAlbumCallback() {
+                                                @Override
+                                                public void onSuccess(JSONObject albums) {
+                                                    // Handle artist data and albums here
+                                                }
+
+                                                @Override
+                                                public void onError(String error) {
+                                                    // Handle error here
+                                                }
+                                            });
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    // Handle error here
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error here
+            }
+        });
     }
 }
