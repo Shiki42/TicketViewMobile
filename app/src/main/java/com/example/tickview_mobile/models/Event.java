@@ -3,6 +3,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Event implements Parcelable{
+    private String id;
     private String name;
     private String imageUrl;
     private String venueName;
@@ -10,6 +11,14 @@ public class Event implements Parcelable{
     private String time;
     private String segmentName;
     // Create getters and setters for each field
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -63,6 +72,7 @@ public class Event implements Parcelable{
     }
 
     protected Event(Parcel in) {
+        id = in.readString();
         name = in.readString();
         imageUrl = in.readString();
         venueName = in.readString();
@@ -90,6 +100,7 @@ public class Event implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(name);
         dest.writeString(imageUrl);
         dest.writeString(venueName);

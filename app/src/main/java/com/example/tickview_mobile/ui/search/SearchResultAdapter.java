@@ -20,10 +20,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     private List<Event> events;
     private Context context;
+    private OnResultItemClickListener onResultItemClickListener;
 
-    public SearchResultAdapter(Context context, List<Event> events) {
+    public interface OnResultItemClickListener {
+        void onResultItemClick(String eventId);
+    }
+
+    public SearchResultAdapter(Context context, List<Event> events, OnResultItemClickListener onResultItemClickListener) {
         this.context = context;
         this.events = events;
+        this.onResultItemClickListener = onResultItemClickListener;
     }
 
     @NonNull
@@ -37,6 +43,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
         Event event = events.get(position);
         holder.bind(event);
+        holder.itemView.setOnClickListener(v -> {
+            if (onResultItemClickListener != null) {
+                onResultItemClickListener.onResultItemClick(event.getId());
+            }
+        });
     }
 
     @Override

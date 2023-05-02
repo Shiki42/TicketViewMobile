@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.Editable;
@@ -92,11 +93,8 @@ public class SearchFormFragment extends Fragment {
                         Bundle args = new Bundle();
                         args.putParcelableArrayList("events", new ArrayList<>(events));
                         searchResultsFragment.setArguments(args);
-
-                        getParentFragmentManager().beginTransaction()
-                                .replace(R.id.nav_host_fragment_activity_main, searchResultsFragment)
-                                .addToBackStack(null)
-                                .commit();
+                        NavController navController = Navigation.findNavController(requireView());
+                        navController.navigate(R.id.action_navigation_search_form_to_navigation_search_results, args);
                     }
 
                     @Override
@@ -121,6 +119,7 @@ public class SearchFormFragment extends Fragment {
                 JSONObject eventJson = eventsArray.optJSONObject(i);
                 Event event = new Event();
 
+                event.setId(eventJson.optString("id"));
                 event.setName(eventJson.optString("name"));
                 event.setImageUrl(eventJson.optJSONArray("images").optJSONObject(0).optString("url"));
                 event.setVenueName(eventJson.optJSONObject("_embedded").optJSONArray("venues").optJSONObject(0).optString("name"));

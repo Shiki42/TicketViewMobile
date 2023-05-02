@@ -27,7 +27,20 @@
         tools:layout="@layout/fragment_search_results">
         <argument
             android:name="events"
-            app:argType="com.example.tickview_mobile.models.Event[]"
+            app:argType="java.util.ArrayList"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_navigation_search_results_to_navigation_detail"
+            app:destination="@+id/navigation_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="com.example.tickview_mobile.ui.search.DetailFragment"
+        android:label="Detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="eventId"
+            app:argType="string" />
     </fragment>
 </navigation>

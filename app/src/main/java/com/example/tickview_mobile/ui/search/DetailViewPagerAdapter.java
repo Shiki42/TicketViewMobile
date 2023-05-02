@@ -15,15 +15,22 @@ public class DetailViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // TODO: Return the appropriate fragment for each tab based on the position
-        // For example: return new DetailsTabFragment();
-        return null;
+        switch (position) {
+            case 0:
+                return new DetailTab1Fragment(); // Tab1
+            case 1:
+                //return new DetailTab2Fragment();
+            case 2:
+                //return new DetailTab3Fragment();
+            default:
+                return new DetailTab1Fragment(); // Default to Tab1 if position is not valid
+        }
     }
 
     @Override
     public int getItemCount() {
         // TODO: Return the number of tabs
         // For example: return 3;
-        return 0;
+        return 3;
     }
 }
