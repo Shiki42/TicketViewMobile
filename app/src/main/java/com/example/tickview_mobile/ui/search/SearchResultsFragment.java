@@ -3,6 +3,8 @@ package com.example.tickview_mobile.ui.search;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -41,6 +43,20 @@ public class SearchResultsFragment extends Fragment {
         updateSearchResults(events);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Show the ActionBar
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setTitle("Search Results");
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            // You can set any other properties or custom views required for the header here
+        }
+    }
+
     public void showProgressBar() {
         ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
@@ -75,8 +91,9 @@ public class SearchResultsFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireView());
                 navController.navigate(R.id.action_navigation_search_results_to_navigation_detail, args);
             });
-            recyclerView.setAdapter(searchResultAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setAdapter(searchResultAdapter);
+
         }
     }
 

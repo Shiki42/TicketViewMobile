@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Upper part -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <!-- First column: artist image -->
+            <ImageView
+                android:id="@+id/artist_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/logo" />
+
+            <!-- Second column: artist details -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="8dp">
+
+                <TextView
+                    android:id="@+id/artist_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Artist Name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/artist_followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Followers: 1234" />
+
+                <TextView
+                    android:id="@+id/spotify_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:text="https://open.spotify.com/artist/12345"
+                    android:textColor="@color/green_700" />
+
+            </LinearLayout>
+
+            <!-- Third column: popularity -->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/popularity_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Popularity"
+                    android:textColor="@color/white" />
+
+                <FrameLayout
+                    android:id="@+id/popularity_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                        android:id="@+id/popularity_progress"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:indeterminate="false"
+                        app:mpb_progressStyle="circular"
+                        app:mpb_setBothDrawables="true"
+                        app:mpb_useIntrinsicPadding="false"
+                        app:mpb_showProgressBackground="true"
+                        app:mpb_progressBackgroundTint="@color/red"
+                        app:mpb_progressTint="@color/red" />
+
+                    <TextView
+                        android:id="@+id/popularity_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="88" />
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!-- Lower part -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/popular_albums_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Popular Albums" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/album_image1"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/logo" />
+
+                <ImageView
+                    android:id="@+id/album_image2"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/logo" />
+
+                <ImageView
+                    android:id="@+id/album_image3"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/logo" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -146,17 +146,41 @@ public class VolleyService {
         requestQueue.add(jsonObjectRequest);
     }
 
+//    public void fetchVenueDetails(String venueId, FetchVenueDetailsCallback callback) {
+//        String url = ServerConfig.SERVER_URL + "/venues?id=" + venueId;
+//
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+//                (Request.Method.GET, url, null, response -> {
+//                    callback.onSuccess(response);
+//                }, error -> callback.onError(error.getMessage()));
+//
+//        requestQueue.add(jsonObjectRequest);
+//    }
+
     public void fetchVenueDetails(String venueId, FetchVenueDetailsCallback callback) {
         String url = ServerConfig.SERVER_URL + "/venues?id=" + venueId;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, response -> {
-                    callback.onSuccess(response);
-                }, error -> callback.onError(error.getMessage()));
+                (Request.Method.GET, url, null,
+                        response -> {
+                            try {
+                                callback.onSuccess(response);
+                            } catch (Exception e) {
+                                Log.e("fetchVenueDetails", "Error in onResponse: " + e.getMessage());
+                                callback.onError("Error while processing response: " + e.getMessage());
+                            }
+                        },
+                        error -> {
+                            try {
+                                callback.onError(error.getMessage());
+                            } catch (Exception e) {
+                                Log.e("fetchVenueDetails", "Error in onErrorResponse: " + e.getMessage());
+                                callback.onError("Error while handling error response: " + e.getMessage());
+                            }
+                        });
 
         requestQueue.add(jsonObjectRequest);
     }
-
     public void fetchArtistDetails(String artistName, FetchArtistDetailsCallback callback) {
         String url = ServerConfig.SERVER_URL + "/artist?keyword=" + Uri.encode(artistName);
 

@@ -1,6 +1,7 @@
 package com.example.tickview_mobile;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -37,9 +39,10 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                Log.d("Navigation", "Current destination: " + navController.getCurrentDestination().getLabel());
                 switch (tab.getPosition()) {
                     case 0:
-                        navController.navigate(R.id.navigation_search);
+                        navController.navigate(R.id.navigation_search_form);
                         break;
                     case 1:
                         navController.navigate(R.id.navigation_favorites);

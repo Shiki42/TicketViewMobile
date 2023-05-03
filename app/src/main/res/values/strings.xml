@@ -4,8 +4,12 @@
     <string name="title_favorites">Favorites</string>
     <string name="title_search_results">Search Results</string>
 
+    <string name="action_facebook">action_facebook</string>
+    <string name="action_settings">action_settings</string>
+    <string name="action_twitter">action_twitter</string>
+    action_facebook
     <string-array name="category_spinner_options">
-        <item>Default</item>
+        <item>All</item>
         <item>Music</item>
         <item>Sports</item>
         <item>Arts &amp; Theatre</item>

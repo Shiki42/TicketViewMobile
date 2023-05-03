@@ -26,16 +26,22 @@ public class DetailTab1Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_detail_tab1, container, false);
-
-        // Set data to the views here using view.findViewById()
-
-        return view;
+        return inflater.inflate(R.layout.fragment_detail_tab1, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Call updateData() initially to set data to the views
+        updateData();
+    }
+
+    public void updateData() {
+        View view = getView();
+        if (view == null) {
+            return;
+        }
 
         // Get the EventDetailData object from the arguments
         Bundle args = getArguments();
@@ -64,8 +70,8 @@ public class DetailTab1Fragment extends Fragment {
                 ticketStatusTextView.setText(eventDetailData.getTicketStatus());
                 buyTicketsTextView.setText(eventDetailData.getTicketUrl());
 
-                 //Load the seat map image using an image loading library like Glide or Picasso
-                 Glide.with(this).load(eventDetailData.getSeatMapUrl()).into(seatMapImageView);
+                // Load the seat map image using an image loading library like Glide or Picasso
+                Glide.with(this).load(eventDetailData.getSeatMapUrl()).into(seatMapImageView);
             }
         }
     }

@@ -1,7 +1,11 @@
 package com.example.tickview_mobile.ui.search;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -9,8 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.tickview_mobile.R;
+import com.example.tickview_mobile.models.ArtistData;
 import com.example.tickview_mobile.models.EventDetailData;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -21,15 +27,63 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import android.view.MenuInflater;
 public class DetailFragment extends Fragment {
     private VolleyService volleyService;
     private ViewPager2 detailViewPager;
     private TabLayout detailTabLayout;
 
+    private String eventName;
+    private String eventUrl;
+
     public DetailFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.action_icon, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    private void shareOnTwitter(String eventName, String eventUrl) {
+        String tweetText = "Check " + eventName + " on Ticketmaster: " + eventUrl;
+        String twitterUrl = "https://twitter.com/intent/tweet?text=" + Uri.encode(tweetText);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(twitterUrl));
+        startActivity(intent);
+    }
+
+    private void shareOnFacebook(String eventUrl) {
+        String facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" + Uri.encode(eventUrl);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_facebook:
+                shareOnFacebook(eventUrl);
+                return true;
+            case R.id.action_twitter:
+                shareOnTwitter(eventName, eventUrl);
+                return true;
+            case android.R.id.home:
+                // Navigate back to the SearchResultFragment
+                NavHostFragment.findNavController(this).navigateUp();
+                ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayHomeAsUpEnabled(false);
+                    actionBar.hide();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -46,10 +100,12 @@ public class DetailFragment extends Fragment {
         // Set up the ActionBar
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
+            actionBar.show();
             actionBar.setTitle("Detail Page");
             actionBar.setDisplayHomeAsUpEnabled(true);
             // You can set your social icons here using actionBar.setCustomView()
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -84,11 +140,22 @@ public class DetailFragment extends Fragment {
         fetchData(eventId);
     }
 
+    private void setEventDetails(JSONObject eventDetailData) {
+        try {
+            eventName = eventDetailData.getString("name");
+            eventUrl = eventDetailData.getString("url");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            // Handle the exception, e.g., show an error message or set default values for eventName and eventUrl
+        }
+    }
+
     public void fetchData(String eventId) {
         volleyService.fetchEventDetails(eventId, new VolleyService.FetchEventDetailsCallback() {
             @Override
             public void onSuccess(JSONObject eventDetailData) {
 
+                setEventDetails(eventDetailData);
                 EventDetailData parsedEventDetailData = parseEventDetailFromResponse(eventDetailData);
                 Bundle bundle = new Bundle();
 
@@ -97,7 +164,7 @@ public class DetailFragment extends Fragment {
 
                 // Get the existing DetailTab1Fragment instance from the ViewPager's adapter
                 DetailViewPagerAdapter detailViewPagerAdapter = (DetailViewPagerAdapter) detailViewPager.getAdapter();
-                DetailTab1Fragment detailTab1Fragment = (DetailTab1Fragment) detailViewPagerAdapter.createFragment(0);
+                DetailTab1Fragment detailTab1Fragment = detailViewPagerAdapter.getDetailTab1Fragment();
 
                 // Update the data in the DetailTab1Fragment
                 detailTab1Fragment.setArguments(bundle);
@@ -131,6 +198,7 @@ public class DetailFragment extends Fragment {
                     }
                 });
 
+                ArrayList<ArtistData> artistDataList = new ArrayList<>();
                 JSONArray attractions;
                 try {
                     attractions = eventDetailData.getJSONObject("_embedded").getJSONArray("attractions");
@@ -138,13 +206,17 @@ public class DetailFragment extends Fragment {
                     e.printStackTrace();
                     attractions = new JSONArray();
                 }
+                //Log.d("attractions in detail_fragment", attractions.toString());
+
+
+                AtomicInteger artistCounter = new AtomicInteger(0);
 
                 for (int i = 0; i < attractions.length(); i++) {
                     try {
                         JSONObject artist = attractions.getJSONObject(i);
                         JSONArray classifications = artist.getJSONArray("classifications");
                         String segmentName = classifications.getJSONObject(0).getJSONObject("segment").getString("name");
-
+                        //Log.d("segmentName in detail_fragment", segmentName);
                         if ("Music".equals(segmentName)) {
                             String artistName = artist.getString("name");
                             volleyService.fetchArtistDetails(artistName, new VolleyService.FetchArtistDetailsCallback() {
@@ -153,16 +225,28 @@ public class DetailFragment extends Fragment {
                                     try {
                                         JSONObject firstResult = artistResponse.getJSONObject("artists").getJSONArray("items").getJSONObject(0);
                                         if (firstResult != null) {
+                                            //Log.d("firstResult in detail_fragment", firstResult.toString());
                                             String artistId = firstResult.getString("id");
                                             volleyService.fetchArtistAlbum(artistId, new VolleyService.FetchArtistAlbumCallback() {
                                                 @Override
                                                 public void onSuccess(JSONObject albums) {
                                                     // Handle artist data and albums here
+                                                    //og.d("albums in detail_fragment", albums.toString());
+                                                    ArtistData artistData = parseArtistFromResponse(firstResult, albums);
+                                                    artistDataList.add(artistData);
+                                                    int remaining = artistCounter.decrementAndGet();
+                                                    if (remaining == 0) {
+                                                        updateDetailTab2Fragment(artistDataList);
+                                                    }
                                                 }
 
                                                 @Override
                                                 public void onError(String error) {
                                                     // Handle error here
+                                                    int remaining = artistCounter.decrementAndGet();
+                                                    if (remaining == 0) {
+                                                        updateDetailTab2Fragment(artistDataList);
+                                                    }
                                                 }
                                             });
                                         }
@@ -176,11 +260,13 @@ public class DetailFragment extends Fragment {
                                     // Handle error here
                                 }
                             });
+                            artistCounter.incrementAndGet();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+
             }
 
             @Override
@@ -188,6 +274,17 @@ public class DetailFragment extends Fragment {
                 // Handle error here
             }
         });
+    }
+
+    private void updateDetailTab2Fragment(ArrayList<ArtistData> artistDataList) {
+        Bundle bundle2 = new Bundle();
+
+        bundle2.putParcelableArrayList("artist_data", artistDataList);
+        DetailViewPagerAdapter detailViewPagerAdapter = (DetailViewPagerAdapter) detailViewPager.getAdapter();
+        DetailTab2Fragment detailTab2Fragment = detailViewPagerAdapter.getDetailTab2Fragment();
+        detailTab2Fragment.setArguments(bundle2);
+        detailTab2Fragment.updateArtistData();
+        detailViewPagerAdapter.notifyItemChanged(1);
     }
 
     public EventDetailData parseEventDetailFromResponse(JSONObject response) {
@@ -244,6 +341,46 @@ public class DetailFragment extends Fragment {
         }
 
         return eventDetailData;
+    }
+
+    public ArtistData parseArtistFromResponse(JSONObject firstResult, JSONObject albums) {
+        ArtistData artistData = new ArtistData();
+
+        try {
+            if (firstResult.has("images")) {
+                JSONArray images = firstResult.getJSONArray("images");
+                if (images.length() > 0) {
+                    artistData.setImage(images.getJSONObject(0).getString("url"));
+                }
+            }
+
+            artistData.setName(firstResult.getString("name"));
+            artistData.setPopularity(firstResult.getInt("popularity"));
+            artistData.setFollowers(firstResult.getJSONObject("followers").getInt("total"));
+            artistData.setSpotifyUrl(firstResult.getJSONObject("external_urls").getString("spotify"));
+
+            if (albums.has("items")) {
+                JSONArray albumItems = albums.getJSONArray("items");
+                List<String> albumCoverImages = new ArrayList<>();
+
+                for (int i = 0; i < albumItems.length(); i++) {
+                    JSONObject album = albumItems.getJSONObject(i);
+                    if (album.has("images")) {
+                        JSONArray albumImages = album.getJSONArray("images");
+                        if (albumImages.length() > 0) {
+                            albumCoverImages.add(albumImages.getJSONObject(0).getString("url"));
+                        }
+                    }
+                }
+
+                artistData.setAlbumCoverImages(albumCoverImages);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return artistData;
     }
 
     private String getGenres(JSONObject classification) {

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,7 +73,7 @@ public class SearchFormFragment extends Fragment {
                 int distance = Integer.parseInt(((EditText) view.findViewById(R.id.distance_input)).getText().toString());
                 String category = ((Spinner) view.findViewById(R.id.category_spinner)).getSelectedItem().toString();
                 String location = ((EditText) view.findViewById(R.id.location_input)).getText().toString();
-                boolean autoDetect = ((RadioButton) view.findViewById(R.id.auto_detect_location)).isChecked();
+                boolean autoDetect = ((Switch) view.findViewById(R.id.auto_detect_location)).isChecked();
 
                 // Call the searchEvent function with the form values
                 searchEvent(keyword, distance, category, location, autoDetect);
