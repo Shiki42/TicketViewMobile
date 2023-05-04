@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_border"
+            android:background="@drawable/rounded_corner_background"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -31,14 +31,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Keyword*"
-                android:textColor="?attr/colorPrimary" />
+                android:textColor="?attr/colorPrimary"
+                />
 
             <AutoCompleteTextView
                 android:id="@+id/keywordField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:dropDownHeight="wrap_content"
-                android:hint="Enter keyword" />
+                android:hint="Enter keyword"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="?attr/colorPrimary" />
 
             <!-- Distance -->
             <TextView
@@ -53,7 +56,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="10" />
+                android:text="10"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="?attr/colorPrimary" />
 
             <!-- Category -->
             <TextView
@@ -98,7 +103,9 @@
                 android:id="@+id/location_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter location" />
+                android:hint="Enter location"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="?attr/colorPrimary" />
             <!-- Search Button -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -121,7 +128,7 @@
                     android:layout_marginStart="16dp"
                     android:text="Clear"
                     android:textColor="#FFFFFF"
-                    app:backgroundTint="?attr/colorPrimary" />
+                    app:backgroundTint="#FFA500"  />
             </LinearLayout>
 
         </LinearLayout>

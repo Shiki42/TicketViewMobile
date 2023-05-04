@@ -14,49 +14,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_arrow_back"
-        android:text="Back to Search"
-        android:background="@android:color/transparent"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_result_recyclerview"
+        android:id="@+id/favorites_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--        xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_marginEnd="10dp"-->
-<!--        android:text="No data available"-->
-<!--        android:textColor="?attr/colorPrimary"-->
-<!--        android:background="@android:color/black"-->
-<!--        android:gravity="center"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintWidth_percent="0.8"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent" />-->
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:text="No events found"
+        android:text="No favorites available"
         android:textColor="?attr/colorPrimary"
         android:background="@drawable/rounded_corner_background"
         android:gravity="center"
@@ -68,5 +41,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
         android:id="@+id/no_data_textview" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

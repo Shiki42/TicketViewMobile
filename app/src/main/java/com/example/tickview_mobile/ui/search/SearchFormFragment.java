@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,7 +61,7 @@ public class SearchFormFragment extends Fragment {
         setupAutoComplete();
 
         Spinner categorySpinner = view.findViewById(R.id.category_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.category_spinner_options, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.category_spinner_options, R.layout.custom_spinner_item); // Use the custom_spinner_item layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
 
@@ -79,37 +80,69 @@ public class SearchFormFragment extends Fragment {
                 searchEvent(keyword, distance, category, location, autoDetect);
             }
         });
-    }
-    private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
-        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-        volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
-            @Override
-            public void onSuccess(String geoPoint) {
-                volleyService.searchEvent(keyword, distance, category, geoPoint, new VolleyService.SearchEventCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        // Handle the search event response
-                        List<Event> events = parseEventsFromResponse(response);
 
-                        Bundle args = new Bundle();
-                        args.putParcelableArrayList("events", new ArrayList<>(events));
-                        searchResultsFragment.setArguments(args);
-                        NavController navController = Navigation.findNavController(requireView());
-                        navController.navigate(R.id.action_navigation_search_form_to_navigation_search_results, args);
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        // Handle the error
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-                // Handle the error
+        Switch autoDetectSwitch = view.findViewById(R.id.auto_detect_location);
+        EditText locationInput = view.findViewById(R.id.location_input);
+        autoDetectSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                locationInput.setVisibility(View.GONE);
+            } else {
+                locationInput.setVisibility(View.VISIBLE);
             }
         });
+
+    }
+//    private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
+//        if (keyword.trim().isEmpty() || (!autoDetect && location.trim().isEmpty())) {
+//            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+//        volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
+//            @Override
+//            public void onSuccess(String geoPoint) {
+//                volleyService.searchEvent(keyword, distance, category, geoPoint, new VolleyService.SearchEventCallback() {
+//                    @Override
+//                    public void onSuccess(JSONObject response) {
+//                        // Handle the search event response
+//                        List<Event> events = parseEventsFromResponse(response);
+//
+//                        Bundle args = new Bundle();
+//                        args.putParcelableArrayList("events", new ArrayList<>(events));
+//                        searchResultsFragment.setArguments(args);
+//                        NavController navController = Navigation.findNavController(requireView());
+//                        navController.navigate(R.id.action_navigation_search_form_to_navigation_search_results, args);
+//                    }
+//
+//                    @Override
+//                    public void onError(String message) {
+//                        // Handle the error
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(String message) {
+//                // Handle the error
+//            }
+//        });
+//    }
+
+    private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
+        if (keyword.trim().isEmpty() || (!autoDetect && location.trim().isEmpty())) {
+            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putString("keyword", keyword);
+        args.putInt("distance", distance);
+        args.putString("category", category);
+        args.putString("location", location);
+        args.putBoolean("autoDetect", autoDetect);
+
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_navigation_search_form_to_navigation_search_results, args);
     }
 
     public List<Event> parseEventsFromResponse(JSONObject response) {

@@ -8,11 +8,12 @@ public class DetailViewPagerAdapter extends FragmentStateAdapter {
 
     private DetailTab1Fragment detailTab1Fragment;
     private DetailTab2Fragment detailTab2Fragment;
-
+    private DetailTab3Fragment detailTab3Fragment;
     public DetailViewPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
         detailTab1Fragment = new DetailTab1Fragment();
         detailTab2Fragment = new DetailTab2Fragment();
+        detailTab3Fragment = new DetailTab3Fragment();
         // If you have a third tab, initialize it here as well
     }
 
@@ -24,6 +25,9 @@ public class DetailViewPagerAdapter extends FragmentStateAdapter {
         return detailTab2Fragment;
     }
 
+    public DetailTab3Fragment getDetailTab3Fragment() {
+        return detailTab3Fragment;
+    }
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -33,7 +37,7 @@ public class DetailViewPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return detailTab2Fragment;
             case 2:
-                //return new DetailTab3Fragment();
+                return detailTab3Fragment;
             default:
                 return new DetailTab1Fragment(); // Default to Tab1 if position is not valid
         }

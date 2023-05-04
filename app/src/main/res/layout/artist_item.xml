@@ -51,9 +51,10 @@
                     android:id="@+id/spotify_link"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:autoLink="web"
                     android:text="https://open.spotify.com/artist/12345"
-                    android:textColor="@color/green_700" />
+                    android:textColor="@color/black"
+                    android:textColorLink="@color/black"
+                    android:linksClickable="true" />
 
             </LinearLayout>
 
@@ -67,24 +68,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Popularity"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/black" />
 
                 <FrameLayout
                     android:id="@+id/popularity_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    <com.mikhaellopez.circularprogressbar.CircularProgressBar
                         android:id="@+id/popularity_progress"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:indeterminate="false"
-                        app:mpb_progressStyle="circular"
-                        app:mpb_setBothDrawables="true"
-                        app:mpb_useIntrinsicPadding="false"
-                        app:mpb_showProgressBackground="true"
-                        app:mpb_progressBackgroundTint="@color/red"
-                        app:mpb_progressTint="@color/red" />
+                        app:cpb_progress="0"
+                        app:cpb_progressbar_color="@color/red"
+                        app:cpb_background_progressbar_color="@color/white"
+                        app:cpb_background_progressbar_width="5dp"
+                        app:cpb_progressbar_width="5dp" />
 
                     <TextView
                         android:id="@+id/popularity_number"

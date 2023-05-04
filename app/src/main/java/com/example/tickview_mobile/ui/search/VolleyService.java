@@ -159,7 +159,7 @@ public class VolleyService {
 
     public void fetchVenueDetails(String venueId, FetchVenueDetailsCallback callback) {
         String url = ServerConfig.SERVER_URL + "/venues?id=" + venueId;
-
+        Log.d("EventUrl", ":" + url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null,
                         response -> {

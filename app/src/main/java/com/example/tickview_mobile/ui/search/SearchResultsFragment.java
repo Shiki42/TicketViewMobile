@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,12 +23,21 @@ import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.databinding.FragmentSearchResultsBinding;
 import com.example.tickview_mobile.models.Event;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
     private FragmentSearchResultsBinding binding;
+    private VolleyService volleyService;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        volleyService = new VolleyService(requireContext());
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,8 +49,22 @@ public class SearchResultsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Set up your RecyclerView or ListView here
-        List<Event> events = getEventsFromArguments();
-        updateSearchResults(events);
+        Bundle args = getArguments();
+        if (args != null) {
+            String keyword = args.getString("keyword");
+            int distance = args.getInt("distance");
+            String category = args.getString("category");
+            String location = args.getString("location");
+            boolean autoDetect = args.getBoolean("autoDetect");
+
+            fetchDataAndDisplayResults(keyword, distance, category, location, autoDetect);
+        }
+
+        Button backButton = view.findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_navigation_search_results_to_navigation_search_form);
+        });
     }
 
     @Override
@@ -55,6 +79,33 @@ public class SearchResultsFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(false);
             // You can set any other properties or custom views required for the header here
         }
+    }
+
+    private void fetchDataAndDisplayResults(String keyword, int distance, String category, String location, boolean autoDetect) {
+        showProgressBar();
+
+        volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
+            @Override
+            public void onSuccess(String geoPoint) {
+                volleyService.searchEvent(keyword, distance, category, geoPoint, new VolleyService.SearchEventCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        List<Event> events = parseEventsFromResponse(response);
+                        updateSearchResults(events);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        // Handle the error
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                // Handle the error
+            }
+        });
     }
 
     public void showProgressBar() {
@@ -76,6 +127,7 @@ public class SearchResultsFragment extends Fragment {
 
         RecyclerView recyclerView = getView().findViewById(R.id.search_result_recyclerview);
         TextView noDataTextView = getView().findViewById(R.id.no_data_textview);
+        noDataTextView.setVisibility(View.GONE);
 
         if (events == null || events.isEmpty()) {
             noDataTextView.setVisibility(View.VISIBLE);
@@ -95,6 +147,28 @@ public class SearchResultsFragment extends Fragment {
             recyclerView.setAdapter(searchResultAdapter);
 
         }
+    }
+
+    public List<Event> parseEventsFromResponse(JSONObject response) {
+        List<Event> events = new ArrayList<>();
+        if (response.has("_embedded") && response.optJSONObject("_embedded").has("events")) {
+            JSONArray eventsArray = response.optJSONObject("_embedded").optJSONArray("events");
+            for (int i = 0; i < eventsArray.length(); i++) {
+                JSONObject eventJson = eventsArray.optJSONObject(i);
+                Event event = new Event();
+
+                event.setId(eventJson.optString("id"));
+                event.setName(eventJson.optString("name"));
+                event.setImageUrl(eventJson.optJSONArray("images").optJSONObject(0).optString("url"));
+                event.setVenueName(eventJson.optJSONObject("_embedded").optJSONArray("venues").optJSONObject(0).optString("name"));
+                event.setDate(eventJson.optJSONObject("dates").optJSONObject("start").optString("localDate"));
+                event.setTime(eventJson.optJSONObject("dates").optJSONObject("start").optString("localTime"));
+                event.setSegmentName(eventJson.optJSONArray("classifications").optJSONObject(0).optJSONObject("segment").optString("name"));
+
+                events.add(event);
+            }
+        }
+        return events;
     }
 
 }

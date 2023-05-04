@@ -10,9 +10,22 @@
         <item name="colorSecondaryVariant">@color/white</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Background color. -->
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorBackground">@color/grey_background</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/grey_background</item>
+    </style>
+
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/logo_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="AppTheme.FragmentBackground" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+
     </style>
 </resources>

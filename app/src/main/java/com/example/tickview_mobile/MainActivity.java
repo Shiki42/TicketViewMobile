@@ -23,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_TickViewmobile); // Replace "AppTheme" with your app's main theme if it has a different name
         super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_main);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

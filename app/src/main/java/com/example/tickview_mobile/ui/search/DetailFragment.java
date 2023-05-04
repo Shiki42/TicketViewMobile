@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.models.ArtistData;
 import com.example.tickview_mobile.models.EventDetailData;
+import com.example.tickview_mobile.models.VenueData;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -184,7 +185,14 @@ public class DetailFragment extends Fragment {
                     @Override
                     public void onSuccess(JSONObject venueDataRes) {
                         try {
-                            JSONObject venueData = venueDataRes.getJSONObject("_embedded").getJSONArray("venues").getJSONObject(0);
+                            Log.e("venueDataRes:", venueDataRes.toString());
+                            if (venueDataRes.has("_embedded")) {
+                                JSONObject venueData = venueDataRes.getJSONObject("_embedded").getJSONArray("venues").getJSONObject(0);
+                                VenueData venueDataParsed = parseVenueFromResponse(venueData);
+                                updateDetailTab3Fragment(venueDataParsed);
+                            } else {
+                                Log.e("fetchVenueDetails", "Error: '_embedded' key not found in the JSONObject");
+                            }
                         } catch (JSONException e) {
                             String venueData = "no venue data";
                             e.printStackTrace();
@@ -274,6 +282,17 @@ public class DetailFragment extends Fragment {
                 // Handle error here
             }
         });
+    }
+
+    private void updateDetailTab3Fragment(VenueData venueData) {
+        Bundle bundle3 = new Bundle();
+
+        bundle3.putParcelable("venueData", venueData);
+        DetailViewPagerAdapter detailViewPagerAdapter = (DetailViewPagerAdapter) detailViewPager.getAdapter();
+        DetailTab3Fragment detailTab3Fragment = detailViewPagerAdapter.getDetailTab3Fragment();
+        detailTab3Fragment.setArguments(bundle3);
+        detailTab3Fragment.updateVenueData();
+        detailViewPagerAdapter.notifyItemChanged(2);
     }
 
     private void updateDetailTab2Fragment(ArrayList<ArtistData> artistDataList) {
@@ -381,6 +400,58 @@ public class DetailFragment extends Fragment {
         }
 
         return artistData;
+    }
+
+    public VenueData parseVenueFromResponse(JSONObject response) {
+        VenueData venueData = new VenueData();
+
+        JSONObject venue = response;
+        if (venue != null) {
+            venueData.setName(venue.optString("name", ""));
+
+            JSONObject address = venue.optJSONObject("address");
+            if (address != null) {
+                venueData.setAddress(address.optString("line1", ""));
+            } else {
+                venueData.setAddress("");
+            }
+
+            JSONObject city = venue.optJSONObject("city");
+            JSONObject state = venue.optJSONObject("state");
+            if (city != null && state != null) {
+                venueData.setCityState(city.optString("name", "") + " / " + state.optString("name", ""));
+            } else {
+                venueData.setCityState("");
+            }
+
+            JSONObject boxOfficeInfo = venue.optJSONObject("boxOfficeInfo");
+            if (boxOfficeInfo != null) {
+                venueData.setContactInfo(boxOfficeInfo.optString("phoneNumberDetail", ""));
+                venueData.setOpenHours(boxOfficeInfo.optString("openHoursDetail", ""));
+            } else {
+                venueData.setContactInfo("");
+                venueData.setOpenHours("");
+            }
+
+            JSONObject generalInfo = venue.optJSONObject("generalInfo");
+            if (generalInfo != null) {
+                venueData.setGeneralRule(generalInfo.optString("generalRule", ""));
+                venueData.setChildRule(generalInfo.optString("childRule", ""));
+            } else {
+                venueData.setGeneralRule("");
+                venueData.setChildRule("");
+            }
+
+            JSONObject location = venue.optJSONObject("location");
+            if (location != null) {
+                double latitude = location.optDouble("latitude", 0.0);
+                double longitude = location.optDouble("longitude", 0.0);
+                venueData.setLatitude(latitude);
+                venueData.setLongitude(longitude);
+            }
+        }
+
+        return venueData;
     }
 
     private String getGenres(JSONObject classification) {

@@ -1,6 +1,8 @@
 package com.example.tickview_mobile.ui.search;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.models.ArtistData;
+import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.util.List;
 
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.ArtistDataViewHolder> {
 
@@ -27,16 +29,16 @@ public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.Ar
     public ArtistDataAdapter(Context context, List<ArtistData> artistDataList) {
         this.context = context;
         this.artistDataList = artistDataList;
-        Log.d("ArtistDataAdapter", "artistDataList size: " + artistDataList.size());
-        Log.d("ArtistDataList", "List contents: " + artistDataList.toString());
-        for (ArtistData artistData : artistDataList) {
-            Log.d("ArtistDataList", "Artist Name: " + artistData.getName());
-            Log.d("ArtistDataList", "Image: " + artistData.getImage());
-            Log.d("ArtistDataList", "Followers: " + artistData.getFollowers());
-            Log.d("ArtistDataList", "Spotify URL: " + artistData.getSpotifyUrl());
-            Log.d("ArtistDataList", "Popularity: " + artistData.getPopularity());
-            Log.d("ArtistDataList", "Album Cover Images: " + artistData.getAlbumCoverImages().toString());
-        }
+//        Log.d("ArtistDataAdapter", "artistDataList size: " + artistDataList.size());
+//        Log.d("ArtistDataList", "List contents: " + artistDataList.toString());
+//        for (ArtistData artistData : artistDataList) {
+//            Log.d("ArtistDataList", "Artist Name: " + artistData.getName());
+//            Log.d("ArtistDataList", "Image: " + artistData.getImage());
+//            Log.d("ArtistDataList", "Followers: " + artistData.getFollowers());
+//            Log.d("ArtistDataList", "Spotify URL: " + artistData.getSpotifyUrl());
+//            Log.d("ArtistDataList", "Popularity: " + artistData.getPopularity());
+//            Log.d("ArtistDataList", "Album Cover Images: " + artistData.getAlbumCoverImages().toString());
+//        }
     }
 
     @NonNull
@@ -51,6 +53,12 @@ public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.Ar
     public void onBindViewHolder(@NonNull ArtistDataViewHolder holder, int position) {
         Log.d("ArtistDataAdapter", "onBindViewHolder position: " + position);
         ArtistData artistData = artistDataList.get(position);
+        holder.spotifyUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSpotifyLink(artistData.getSpotifyUrl());
+            }
+        });
         holder.bind(artistData);
     }
 
@@ -59,11 +67,16 @@ public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.Ar
         return artistDataList.size();
     }
 
+    public void onClickSpotifyLink(String spotifyUrl) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(spotifyUrl));
+        context.startActivity(intent);
+    }
+
     public class ArtistDataViewHolder extends RecyclerView.ViewHolder {
 
         ImageView artistImage;
         TextView artistName, followers, spotifyUrl, popularityNumber;
-        MaterialProgressBar progressView;
+        CircularProgressBar progressView;
 
         ImageView albumImage1;
         ImageView albumImage2;
@@ -91,7 +104,6 @@ public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.Ar
             followers.setText(String.format("%d followers", artistData.getFollowers()));
             Log.d("getSpotifyUrl", artistData.getSpotifyUrl());
             spotifyUrl.setText(artistData.getSpotifyUrl());
-            progressView.setMax(100);
             Log.d("getPopularity", String.valueOf(artistData.getPopularity()));
             progressView.setProgress(artistData.getPopularity());
             popularityNumber.setText(String.valueOf(artistData.getPopularity()));
