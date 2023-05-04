@@ -47,6 +47,11 @@ public class DetailTab3Fragment extends Fragment {
         updateVenueData();
     }
 
+    public void showProgressBar() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
     private void toggleMaxLines(TextView textView) {
         if (textView.getMaxLines() == 3) {
             textView.setMaxLines(Integer.MAX_VALUE);
@@ -60,6 +65,9 @@ public class DetailTab3Fragment extends Fragment {
         if (view == null) {
             return;
         }
+
+        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         // Get the VenueData object from the arguments
         Bundle args = getArguments();

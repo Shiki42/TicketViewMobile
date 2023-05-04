@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,19 +34,34 @@ public class DetailTab1Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        showProgressBar();
         // Call updateData() initially to set data to the views
-        updateData();
+        Bundle args = getArguments();
+        if (args != null) {
+            updateData();
+        }
+    }
+
+    public void showProgressBar() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     public void updateData() {
+
         View view = getView();
         if (view == null) {
             return;
         }
 
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
         // Get the EventDetailData object from the arguments
         Bundle args = getArguments();
         if (args != null) {
+
+
             EventDetailData eventDetailData = args.getParcelable("eventDetailData");
 
             // Use eventDetailData to set the contents of the views

@@ -1,6 +1,10 @@
 package com.example.tickview_mobile.models;
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Event implements Parcelable{
     private String id;
@@ -55,10 +59,23 @@ public class Event implements Parcelable{
         return time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTime(String localTime) {
+        if (!localTime.isEmpty()) {
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                Date parsedTime = inputFormat.parse(localTime);
+                if (parsedTime != null) {
+                    this.time = outputFormat.format(parsedTime);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+                this.time = localTime;
+            }
+        } else {
+            this.time = localTime;
+        }
     }
-
 
     public String getSegmentName() {
         return segmentName;

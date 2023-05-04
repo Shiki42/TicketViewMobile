@@ -37,17 +37,29 @@ public class DetailTab2Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        updateArtistData();
-        //        artistDataList = getArtistDataFromArguments(); // You need to implement this method to get artistDataList from arguments
-        //        updateArtistData(artistDataList);
+        showProgressBar();
+        // Call updateData() initially to set data to the views
+        Bundle args = getArguments();
+        if (args != null) {
+            updateArtistData();
+        }
     }
 
 
+    public void showProgressBar() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
     public void updateArtistData() {
+
         View view = getView();
         if (view == null) {
             return;
         }
+
+        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -55,8 +67,7 @@ public class DetailTab2Fragment extends Fragment {
 
 
 
-            ProgressBar progressBar = view.findViewById(R.id.progress_bar);
-            progressBar.setVisibility(View.GONE);
+
 
             RecyclerView recyclerView = view.findViewById(R.id.artist_data_recyclerview);
             TextView noDataTextView = view.findViewById(R.id.no_data_textview);
