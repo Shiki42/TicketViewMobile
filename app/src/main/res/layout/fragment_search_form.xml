@@ -86,8 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Location*"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="18sp" />
+                    android:textColor="?attr/colorPrimary" />
 
                 <Switch
                     android:id="@+id/auto_detect_location"

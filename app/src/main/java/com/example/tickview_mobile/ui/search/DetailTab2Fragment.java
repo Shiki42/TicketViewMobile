@@ -39,10 +39,7 @@ public class DetailTab2Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         showProgressBar();
         // Call updateData() initially to set data to the views
-        Bundle args = getArguments();
-        if (args != null) {
-            updateArtistData();
-        }
+        updateArtistData();
     }
 
 
@@ -58,16 +55,13 @@ public class DetailTab2Fragment extends Fragment {
             return;
         }
 
-        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
-
         Bundle args = getArguments();
         if (args != null) {
+
+            ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+            progressBar.setVisibility(View.GONE);
+
             artistDataList = getArguments().getParcelableArrayList("artist_data");
-
-
-
-
 
             RecyclerView recyclerView = view.findViewById(R.id.artist_data_recyclerview);
             TextView noDataTextView = view.findViewById(R.id.no_data_textview);

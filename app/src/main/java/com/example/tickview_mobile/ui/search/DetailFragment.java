@@ -1,5 +1,7 @@
 package com.example.tickview_mobile.ui.search;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,31 +19,55 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.tickview_mobile.R;
 import com.example.tickview_mobile.models.ArtistData;
+import com.example.tickview_mobile.models.Event;
 import com.example.tickview_mobile.models.EventDetailData;
 import com.example.tickview_mobile.models.VenueData;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import android.view.MenuInflater;
+import android.widget.TextView;
+import android.widget.Toast;
+
 public class DetailFragment extends Fragment {
     private VolleyService volleyService;
     private ViewPager2 detailViewPager;
     private TabLayout detailTabLayout;
 
+    private Event event;
     private String eventName;
     private String eventUrl;
 
     public DetailFragment() {
         // Required empty public constructor
+    }
+
+    private void updateFavoriteButtonImage(Event event, MenuItem menuItem) {
+        if (isEventInFavorites(event)) {
+            menuItem.setIcon(R.drawable.heart_filled);
+        } else {
+            menuItem.setIcon(R.drawable.heart_outline);
+        }
+    }
+
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem favoriteMenuItem = menu.findItem(R.id.action_favorite);
+        updateFavoriteButtonImage(event, favoriteMenuItem);
     }
 
     @Override
@@ -50,6 +76,16 @@ public class DetailFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
+    private void toggleFavoriteStatus() {
+        if (isEventInFavorites(event)) {
+            removeEventFromFavorites(event);
+        } else {
+            addEventToFavorites(event);
+        }
+        // Update the favorite button icon in the action bar.
+        getActivity().invalidateOptionsMenu();
+    }
 
     private void shareOnTwitter(String eventName, String eventUrl) {
         String tweetText = "Check " + eventName + " on Ticketmaster: " + eventUrl;
@@ -72,6 +108,9 @@ public class DetailFragment extends Fragment {
                 return true;
             case R.id.action_twitter:
                 shareOnTwitter(eventName, eventUrl);
+                return true;
+            case R.id.action_favorite: // <- Add this case
+                toggleFavoriteStatus();
                 return true;
             case android.R.id.home:
                 // Navigate back to the SearchResultFragment
@@ -99,13 +138,7 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         volleyService = new VolleyService(requireContext());
         // Set up the ActionBar
-        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.show();
-            actionBar.setTitle("Detail Page");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            // You can set your social icons here using actionBar.setCustomView()
-        }
+
         setHasOptionsMenu(true);
     }
 
@@ -136,7 +169,24 @@ public class DetailFragment extends Fragment {
             }
         }).attach();
 
-        String eventId = getArguments().getString("eventId");
+        event = getArguments().getParcelable("event");
+        String eventId = event.getId();
+
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            // Use the custom layout for the title
+            LayoutInflater inflater = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View marqueeTitleView = inflater.inflate(R.layout.marquee_title, null);
+            TextView marqueeTitle = marqueeTitleView.findViewById(R.id.marquee_title);
+            marqueeTitle.setText(event.getName());
+            marqueeTitle.setSelected(true); // Set the TextView as selected to enable scrolling
+            actionBar.setCustomView(marqueeTitleView);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
 
         fetchData(eventId);
     }
@@ -185,16 +235,17 @@ public class DetailFragment extends Fragment {
                     @Override
                     public void onSuccess(JSONObject venueDataRes) {
                         try {
-                            Log.e("venueDataRes:", venueDataRes.toString());
+                            //Log.e("venueDataRes:", venueDataRes.toString());
                             if (venueDataRes.has("_embedded")) {
                                 JSONObject venueData = venueDataRes.getJSONObject("_embedded").getJSONArray("venues").getJSONObject(0);
                                 VenueData venueDataParsed = parseVenueFromResponse(venueData);
                                 updateDetailTab3Fragment(venueDataParsed);
                             } else {
                                 Log.e("fetchVenueDetails", "Error: '_embedded' key not found in the JSONObject");
+                                updateDetailTab3Fragment(null);
                             }
                         } catch (JSONException e) {
-                            String venueData = "no venue data";
+                            //String venueData = "no venue data";
                             e.printStackTrace();
                         }                        // Handle venue data here
                     }
@@ -212,12 +263,16 @@ public class DetailFragment extends Fragment {
                     attractions = eventDetailData.getJSONObject("_embedded").getJSONArray("attractions");
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                     attractions = new JSONArray();
                 }
-                //Log.d("attractions in detail_fragment", attractions.toString());
+                Log.d("attractions in detail_fragment", attractions.toString());
 
-
+                if (attractions.length() == 0){
+                    updateDetailTab2Fragment(null);
+                }
                 AtomicInteger artistCounter = new AtomicInteger(0);
+                boolean isUpdateDetailTab2FragmentCalled = false;
 
                 for (int i = 0; i < attractions.length(); i++) {
                     try {
@@ -226,6 +281,7 @@ public class DetailFragment extends Fragment {
                         String segmentName = classifications.getJSONObject(0).getJSONObject("segment").getString("name");
                         //Log.d("segmentName in detail_fragment", segmentName);
                         if ("Music".equals(segmentName)) {
+                            isUpdateDetailTab2FragmentCalled = true;
                             String artistName = artist.getString("name");
                             volleyService.fetchArtistDetails(artistName, new VolleyService.FetchArtistDetailsCallback() {
                                 @Override
@@ -275,6 +331,10 @@ public class DetailFragment extends Fragment {
                     }
                 }
 
+                if (!isUpdateDetailTab2FragmentCalled) {
+                    updateDetailTab2Fragment(artistDataList);
+                }
+
             }
 
             @Override
@@ -297,7 +357,7 @@ public class DetailFragment extends Fragment {
 
     private void updateDetailTab2Fragment(ArrayList<ArtistData> artistDataList) {
         Bundle bundle2 = new Bundle();
-
+        Log.d("updateDetailTab2Fragment is called", artistDataList.toString());
         bundle2.putParcelableArrayList("artist_data", artistDataList);
         DetailViewPagerAdapter detailViewPagerAdapter = (DetailViewPagerAdapter) detailViewPager.getAdapter();
         DetailTab2Fragment detailTab2Fragment = detailViewPagerAdapter.getDetailTab2Fragment();
@@ -421,7 +481,7 @@ public class DetailFragment extends Fragment {
             if (city != null && state != null) {
                 venueData.setCityState(city.optString("name", "") + " / " + state.optString("name", ""));
             } else {
-                venueData.setCityState("");
+                venueData.setCityState("N/A");
             }
 
             JSONObject boxOfficeInfo = venue.optJSONObject("boxOfficeInfo");
@@ -429,8 +489,8 @@ public class DetailFragment extends Fragment {
                 venueData.setContactInfo(boxOfficeInfo.optString("phoneNumberDetail", ""));
                 venueData.setOpenHours(boxOfficeInfo.optString("openHoursDetail", ""));
             } else {
-                venueData.setContactInfo("");
-                venueData.setOpenHours("");
+                venueData.setContactInfo("N/A");
+                venueData.setOpenHours("N/A");
             }
 
             JSONObject generalInfo = venue.optJSONObject("generalInfo");
@@ -438,8 +498,8 @@ public class DetailFragment extends Fragment {
                 venueData.setGeneralRule(generalInfo.optString("generalRule", ""));
                 venueData.setChildRule(generalInfo.optString("childRule", ""));
             } else {
-                venueData.setGeneralRule("");
-                venueData.setChildRule("");
+                venueData.setGeneralRule("N/A");
+                venueData.setChildRule("N/A");
             }
 
             JSONObject location = venue.optJSONObject("location");
@@ -483,6 +543,48 @@ public class DetailFragment extends Fragment {
         }
 
         return names.stream().filter(name -> (name != null && !name.equals("Undefined"))).collect(Collectors.joining(" | "));
+    }
+
+    private List<Event> getFavoriteEventsList() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("favorite_list", Context.MODE_PRIVATE);
+        String favoriteEventsJson = sharedPreferences.getString("favorite_list", null);
+        if (favoriteEventsJson != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Event>>() {}.getType();
+            return gson.fromJson(favoriteEventsJson, type);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private void saveFavoriteEventsList(List<Event> favoriteEventsList) {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("favorite_list", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String favoriteEventsJson = gson.toJson(favoriteEventsList);
+        editor.putString("favorite_list", favoriteEventsJson);
+        editor.apply();
+    }
+
+    private boolean isEventInFavorites(Event event) {
+        List<Event> favoriteEventsList = getFavoriteEventsList();
+        return favoriteEventsList.stream().anyMatch(e -> e.getId().equals(event.getId()));
+    }
+
+    private void addEventToFavorites(Event event) {
+        List<Event> favoriteEventsList = getFavoriteEventsList();
+        favoriteEventsList.add(event);
+        saveFavoriteEventsList(favoriteEventsList);
+        String message = String.format("%s added to favorites", event.getName());
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void removeEventFromFavorites(Event event) {
+        List<Event> favoriteEventsList = getFavoriteEventsList();
+        favoriteEventsList.removeIf(e -> e.getId().equals(event.getId()));
+        saveFavoriteEventsList(favoriteEventsList);
+        String message = String.format("%s removed from favorites", event.getName());
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private String getPriceRanges(JSONArray priceRanges) {

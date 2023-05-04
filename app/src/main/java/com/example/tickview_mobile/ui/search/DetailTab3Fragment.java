@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -76,6 +77,8 @@ public class DetailTab3Fragment extends Fragment {
 
             // Use venueData to set the contents of the views
             // Replace these ids with the actual ids of your views
+            ScrollView allView = view.findViewById(R.id.venue_all);
+            TextView noDataTextView = view.findViewById(R.id.no_data_textview);
             TextView nameTextView = view.findViewById(R.id.nameValue);
             TextView addressTextView = view.findViewById(R.id.addressValue);
             TextView cityStateTextView = view.findViewById(R.id.cityStateValue);
@@ -83,9 +86,12 @@ public class DetailTab3Fragment extends Fragment {
             TextView openHoursTextView = view.findViewById(R.id.openHoursValue);
             TextView generalRuleTextView = view.findViewById(R.id.generalRuleValue);
             TextView childRuleTextView = view.findViewById(R.id.childRuleValue);
-
+            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             // Set the values from venueData to the views
             if (venueData != null) {
+                noDataTextView.setVisibility(View.GONE);
+                allView.setVisibility(View.VISIBLE);
+                
                 nameTextView.setText(venueData.getName());
                 addressTextView.setText(venueData.getAddress());
                 cityStateTextView.setText(venueData.getCityState());
@@ -96,22 +102,24 @@ public class DetailTab3Fragment extends Fragment {
                 openHoursTextView.setOnClickListener(v -> toggleMaxLines((TextView) v));
                 generalRuleTextView.setOnClickListener(v -> toggleMaxLines((TextView) v));
                 childRuleTextView.setOnClickListener(v -> toggleMaxLines((TextView) v));
+
+                if (mapFragment != null) {
+                    mapFragment.getMapAsync(googleMap -> {
+                        // Use venueData to set the map location
+                        if (venueData != null && venueData.getLatitude() != null && venueData.getLongitude() != null) {
+                            LatLng venueLocation = new LatLng(venueData.getLatitude(), venueData.getLongitude());
+                            googleMap.addMarker(new MarkerOptions().position(venueLocation).title(venueData.getName()));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 15));
+                        }
+                    });
+                }
+            } else {
+                noDataTextView.setVisibility(View.VISIBLE);
+                allView.setVisibility(View.GONE);
             }
-
-
 
             // Initialize the map
-            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-            if (mapFragment != null) {
-                mapFragment.getMapAsync(googleMap -> {
-                    // Use venueData to set the map location
-                    if (venueData != null && venueData.getLatitude() != null && venueData.getLongitude() != null) {
-                        LatLng venueLocation = new LatLng(venueData.getLatitude(), venueData.getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(venueLocation).title(venueData.getName()));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 15));
-                    }
-                });
-            }
+
         }
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +29,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     private OnFavoriteClickListener onFavoriteClickListener;
 
     public interface OnResultItemClickListener {
-        void onResultItemClick(String eventId);
+        void onResultItemClick(Event event);
     }
 
     public interface OnFavoriteClickListener {
@@ -62,7 +63,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.bind(event);
         holder.itemView.setOnClickListener(v -> {
             if (onResultItemClickListener != null) {
-                onResultItemClickListener.onResultItemClick(event.getId());
+                onResultItemClickListener.onResultItemClick(event);
             }
         });
     }
@@ -160,11 +161,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         List<Event> favoriteEventsList = getFavoriteEventsList();
         favoriteEventsList.add(event);
         saveFavoriteEventsList(favoriteEventsList);
+        String message = String.format("%s added to favorites", event.getName());
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     private void removeEventFromFavorites(Event event) {
         List<Event> favoriteEventsList = getFavoriteEventsList();
         favoriteEventsList.removeIf(e -> e.getId().equals(event.getId()));
         saveFavoriteEventsList(favoriteEventsList);
+        String message = String.format("%s removed from favorites", event.getName());
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

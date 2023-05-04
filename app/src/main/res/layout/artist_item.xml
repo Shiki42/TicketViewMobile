@@ -73,7 +73,8 @@
                 <FrameLayout
                     android:id="@+id/popularity_container"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/popularity_text">
 
                     <com.mikhaellopez.circularprogressbar.CircularProgressBar
                         android:id="@+id/popularity_progress"
@@ -95,6 +96,7 @@
                 </FrameLayout>
 
             </RelativeLayout>
+
 
         </LinearLayout>
 

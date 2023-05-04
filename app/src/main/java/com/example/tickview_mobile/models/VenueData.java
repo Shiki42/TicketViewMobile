@@ -15,6 +15,13 @@ public class VenueData implements Parcelable {
     private Double longitude;
 
     public VenueData() {
+        this.name = "N/A";
+        this.address = "N/A";
+        this.cityState = "N/A";
+        this.contactInfo = "N/A";
+        this.openHours = "N/A";
+        this.generalRule = "N/A";
+        this.childRule = "N/A";
     }
 
     public String getName() {

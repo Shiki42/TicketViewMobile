@@ -1,6 +1,12 @@
 package com.example.tickview_mobile.ui.search;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +73,7 @@ public class DetailTab1Fragment extends Fragment {
             // Use eventDetailData to set the contents of the views
             // Replace these ids with the actual ids of your views
             TextView dateTextView = view.findViewById(R.id.cardDateValue);
+            TextView timeTextView = view.findViewById(R.id.cardTimeValue);
             TextView artistTextView = view.findViewById(R.id.cardArtistValue);
             TextView venueTextView = view.findViewById(R.id.cardVenueValue);
             TextView genresTextView = view.findViewById(R.id.cardGenresValue);
@@ -78,14 +85,43 @@ public class DetailTab1Fragment extends Fragment {
             // Set the values from eventDetailData to the views
             // You may need to use the helper functions you've created to format the data (e.g. getGenres(), getTicketStatusMessage(), getPriceRanges())
             if (eventDetailData != null) {
-                dateTextView.setText(eventDetailData.getLocalDate() + " " + eventDetailData.getLocalTime());
+
+                String buyTicketsUrl = eventDetailData.getTicketUrl();
+                String buyTicketsText = buyTicketsUrl;
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(buyTicketsText);
+
+                // Set the URLSpan with your desired link
+                spannableStringBuilder.setSpan(new URLSpan(buyTicketsUrl), 0, buyTicketsText.length(), 0);
+
+                // Set the ForegroundColorSpan with your desired text color
+                spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.parseColor("#FF4081")), 0, buyTicketsText.length(), 0);
+
+                // Apply the SpannableStringBuilder to the TextView
+                buyTicketsTextView.setText(spannableStringBuilder);
+
+                // Apply the marquee effect to the TextView
+                buyTicketsTextView.setSelected(true);
+
+                // Set the onClick listener for the TextView
+                buyTicketsTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(buyTicketsUrl));
+                        startActivity(browserIntent);
+                    }
+                });
+
+                dateTextView.setText(eventDetailData.getLocalDate());
+                timeTextView.setText(eventDetailData.getLocalTime());
                 artistTextView.setText(eventDetailData.getAttractions());
                 venueTextView.setText(eventDetailData.getVenueName());
                 genresTextView.setText(eventDetailData.getGenres());
                 priceRangesTextView.setText(eventDetailData.getPriceRanges());
                 ticketStatusTextView.setText(eventDetailData.getTicketStatus());
                 buyTicketsTextView.setText(eventDetailData.getTicketUrl());
-
+                artistTextView.setSelected(true);
+                genresTextView.setSelected(true);
+                venueTextView.setSelected(true);
                 // Load the seat map image using an image loading library like Glide or Picasso
                 Glide.with(this).load(eventDetailData.getSeatMapUrl()).into(seatMapImageView);
             }

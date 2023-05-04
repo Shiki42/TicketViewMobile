@@ -136,10 +136,10 @@ public class SearchResultsFragment extends Fragment {
             noDataTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
 
-            SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), events, eventId -> {
+            SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), events, event -> {
                 // Call the showDetailFragmentAndFetchData() method in the parent activity
                 Bundle args = new Bundle();
-                args.putString("eventId", eventId);
+                args.putParcelable("event", event);
                 NavController navController = Navigation.findNavController(requireView());
                 navController.navigate(R.id.action_navigation_search_results_to_navigation_detail, args);
             });

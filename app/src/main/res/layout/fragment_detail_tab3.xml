@@ -13,11 +13,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="Venue data unavailable"
+        android:textColor="?attr/colorPrimary"
+        android:background="@drawable/rounded_corner_background"
+        android:gravity="center"
+        android:textSize="18sp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:id="@+id/no_data_textview" />
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:id="@+id/venue_all">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -156,7 +175,15 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <!-- Open Hours -->
+                <!-- Open Hours Label -->
+                <TextView
+                    android:id="@+id/openHoursLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open Hours"
+                    android:textStyle="bold" />
+
+                <!-- Open Hours Value -->
                 <TextView
                     android:id="@+id/openHoursValue"
                     android:layout_width="wrap_content"
@@ -164,9 +191,18 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="Open Hours: \nOpen Hours Value" />
+                    android:text="Open Hours Value" />
 
-                <!-- General Rule -->
+                <!-- General Rule Label -->
+                <TextView
+                    android:id="@+id/generalRuleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="General Rule"
+                    android:textStyle="bold" />
+
+                <!-- General Rule Value -->
                 <TextView
                     android:id="@+id/generalRuleValue"
                     android:layout_width="wrap_content"
@@ -175,9 +211,18 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="General Rule: \nGeneral Rule Value" />
+                    android:text="General Rule Value" />
 
-                <!-- Child Rule -->
+                <!-- Child Rule Label -->
+                <TextView
+                    android:id="@+id/childRuleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Child Rule"
+                    android:textStyle="bold" />
+
+                <!-- Child Rule Value -->
                 <TextView
                     android:id="@+id/childRuleValue"
                     android:layout_width="wrap_content"
@@ -186,9 +231,10 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="Child Rule: \nChild Rule Value" />
+                    android:text="Child Rule Value" />
 
             </LinearLayout>
+
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>
