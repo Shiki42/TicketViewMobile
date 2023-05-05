@@ -81,6 +81,14 @@ public class SearchFormFragment extends Fragment {
             }
         });
 
+        Button clearButton = view.findViewById(R.id.clear_button);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearForm();
+            }
+        });
+
         Switch autoDetectSwitch = view.findViewById(R.id.auto_detect_location);
         EditText locationInput = view.findViewById(R.id.location_input);
         autoDetectSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -92,47 +100,27 @@ public class SearchFormFragment extends Fragment {
         });
 
     }
-//    private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
-//        if (keyword.trim().isEmpty() || (!autoDetect && location.trim().isEmpty())) {
-//            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-//        volleyService.fetchLocation(autoDetect, location, new VolleyService.FetchLocationCallback() {
-//            @Override
-//            public void onSuccess(String geoPoint) {
-//                volleyService.searchEvent(keyword, distance, category, geoPoint, new VolleyService.SearchEventCallback() {
-//                    @Override
-//                    public void onSuccess(JSONObject response) {
-//                        // Handle the search event response
-//                        List<Event> events = parseEventsFromResponse(response);
-//
-//                        Bundle args = new Bundle();
-//                        args.putParcelableArrayList("events", new ArrayList<>(events));
-//                        searchResultsFragment.setArguments(args);
-//                        NavController navController = Navigation.findNavController(requireView());
-//                        navController.navigate(R.id.action_navigation_search_form_to_navigation_search_results, args);
-//                    }
-//
-//                    @Override
-//                    public void onError(String message) {
-//                        // Handle the error
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(String message) {
-//                // Handle the error
-//            }
-//        });
-//    }
+
+    private void clearForm() {
+        // Clear keyword and location fields
+        binding.keywordField.setText("");
+        binding.locationInput.setText("");
+
+        // Set distance to 10
+        binding.distanceInput.setText("10");
+
+        binding.categorySpinner.setSelection(0);
+
+        // Set auto-detect to unchecked
+        binding.autoDetectLocation.setChecked(false);
+    }
 
     private void searchEvent(String keyword, int distance, String category, String location, boolean autoDetect) {
         if (keyword.trim().isEmpty() || (!autoDetect && location.trim().isEmpty())) {
             Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
+
 
         Bundle args = new Bundle();
         args.putString("keyword", keyword);

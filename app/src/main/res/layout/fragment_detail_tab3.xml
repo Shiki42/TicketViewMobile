@@ -78,7 +78,7 @@
             android:scrollHorizontally="true"
             android:ellipsize="end"
             android:maxLines="3"
-            android:text="Name Value" />
+            android:text="N/A" />
     </LinearLayout>
 
     <!-- Row 2: Address -->
@@ -101,7 +101,7 @@
             android:scrollHorizontally="true"
             android:ellipsize="end"
             android:maxLines="3"
-            android:text="Address Value" />
+            android:text="N/A" />
     </LinearLayout>
 
     <!-- Row 3: City/State -->
@@ -124,7 +124,7 @@
             android:scrollHorizontally="true"
             android:ellipsize="end"
             android:maxLines="3"
-            android:text="City/State Value" />
+            android:text="N/A" />
     </LinearLayout>
 
     <!-- Row 4: Contact Info -->
@@ -147,7 +147,7 @@
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="Contact Info Value" />
+        android:text="N/A" />
     </LinearLayout>
 
         <!-- Google Maps View -->
@@ -167,6 +167,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="#FFCC7A02"
             app:cardElevation="4dp">
 
             <LinearLayout
@@ -191,7 +192,7 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="Open Hours Value" />
+                    android:text="N/A" />
 
                 <!-- General Rule Label -->
                 <TextView
@@ -211,7 +212,7 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="General Rule Value" />
+                    android:text="N/A" />
 
                 <!-- Child Rule Label -->
                 <TextView
@@ -231,7 +232,7 @@
                     android:scrollHorizontally="true"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="Child Rule Value" />
+                    android:text="N/A" />
 
             </LinearLayout>
 

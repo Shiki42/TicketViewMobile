@@ -2,8 +2,13 @@ package com.example.tickview_mobile.ui.search;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
@@ -38,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import android.view.MenuInflater;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,6 +108,7 @@ public class DetailFragment extends Fragment {
         startActivity(intent);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -117,6 +126,7 @@ public class DetailFragment extends Fragment {
                 NavHostFragment.findNavController(this).navigateUp();
                 ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
                 if (actionBar != null) {
+                    //actionBar.setTitle("Event Finder");
                     actionBar.setDisplayHomeAsUpEnabled(false);
                     actionBar.hide();
                 }
@@ -142,6 +152,7 @@ public class DetailFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -154,20 +165,63 @@ public class DetailFragment extends Fragment {
         DetailViewPagerAdapter detailViewPagerAdapter = new DetailViewPagerAdapter(this);
         detailViewPager.setAdapter(detailViewPagerAdapter);
 
-        // Set up the TabLayout
+         //Set up the TabLayout
         new TabLayoutMediator(detailTabLayout, detailViewPager, (tab, position) -> {
+            // Inflate the custom tab layout
+            LayoutInflater inflater = LayoutInflater.from(requireActivity());
+            View customTabView = inflater.inflate(R.layout.custom_tab, null);
+
+            // Get the ImageView and TextView from the custom layout
+            ImageView tabIcon = customTabView.findViewById(R.id.tab_icon);
+            TextView tabTitle = customTabView.findViewById(R.id.tab_title);
+
             switch (position) {
                 case 0:
-                    tab.setText("DETAILS");
+                    tabTitle.setText("DETAILS");
+                    tabIcon.setImageResource(R.drawable.info_icon);
                     break;
                 case 1:
-                    tab.setText("ARTIST(S)");
+                    tabTitle.setText("ARTIST(S)");
+                    tabIcon.setImageResource(R.drawable.artist_icon);
                     break;
                 case 2:
-                    tab.setText("VENUE");
+                    tabTitle.setText("VENUE");
+                    tabIcon.setImageResource(R.drawable.venue_icon);
                     break;
             }
+
+            // Set the custom view for the tab
+            tab.setCustomView(customTabView);
         }).attach();
+
+        int colorPrimary = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+        detailTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                View customView = tab.getCustomView();
+                if (customView != null) {
+                    ImageView tabIcon = customView.findViewById(R.id.tab_icon);
+                    TextView tabTitle = customView.findViewById(R.id.tab_title);
+                    tabIcon.setColorFilter(colorPrimary);
+                    tabTitle.setTextColor(colorPrimary);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                View customView = tab.getCustomView();
+                if (customView != null) {
+                    ImageView tabIcon = customView.findViewById(R.id.tab_icon);
+                    TextView tabTitle = customView.findViewById(R.id.tab_title);
+                    tabIcon.setColorFilter(Color.WHITE);
+                    tabTitle.setTextColor(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
         event = getArguments().getParcelable("event");
         String eventId = event.getId();
@@ -245,7 +299,7 @@ public class DetailFragment extends Fragment {
                                 updateDetailTab3Fragment(null);
                             }
                         } catch (JSONException e) {
-                            //String venueData = "no venue data";
+                            updateDetailTab3Fragment(null);
                             e.printStackTrace();
                         }                        // Handle venue data here
                     }
@@ -267,7 +321,7 @@ public class DetailFragment extends Fragment {
                     attractions = new JSONArray();
                 }
                 Log.d("attractions in detail_fragment", attractions.toString());
-
+                Log.d("test", attractions.toString());
                 if (attractions.length() == 0){
                     updateDetailTab2Fragment(null);
                 }
@@ -357,7 +411,7 @@ public class DetailFragment extends Fragment {
 
     private void updateDetailTab2Fragment(ArrayList<ArtistData> artistDataList) {
         Bundle bundle2 = new Bundle();
-        Log.d("updateDetailTab2Fragment is called", artistDataList.toString());
+        //Log.d("updateDetailTab2Fragment is called", artistDataList.toString());
         bundle2.putParcelableArrayList("artist_data", artistDataList);
         DetailViewPagerAdapter detailViewPagerAdapter = (DetailViewPagerAdapter) detailViewPager.getAdapter();
         DetailTab2Fragment detailTab2Fragment = detailViewPagerAdapter.getDetailTab2Fragment();
@@ -374,11 +428,20 @@ public class DetailFragment extends Fragment {
             JSONObject start = dates.optJSONObject("start");
             if (start != null) {
                 eventDetailData.setLocalDate(start.optString("localDate"));
-                eventDetailData.setLocalTime(start.optString("localTime"));
+                if(start.optString("localTime")!=null){
+                    eventDetailData.setLocalTime(start.optString("localTime"));
+                }
+                else{
+                    eventDetailData.setLocalTime("N/A");
+                }
+
+
             }
             JSONObject status = dates.optJSONObject("status");
             if (status != null) {
                 eventDetailData.setTicketStatus(status.optString("code"));
+            } else {
+                eventDetailData.setTicketStatus("N/A");
             }
         }
 
@@ -410,6 +473,8 @@ public class DetailFragment extends Fragment {
         if (priceRanges != null) {
             // Use the getPriceRanges function to parse the price ranges.
             eventDetailData.setPriceRanges(getPriceRanges(priceRanges));
+        } else {
+            eventDetailData.setPriceRanges("N/A");
         }
 
         eventDetailData.setTicketUrl(response.optString("url"));
@@ -417,6 +482,7 @@ public class DetailFragment extends Fragment {
         JSONObject seatMap = response.optJSONObject("seatmap");
         if (seatMap != null) {
             eventDetailData.setSeatMapUrl(seatMap.optString("staticUrl"));
+            Log.d("seatMap Url", seatMap.optString("staticUrl"));
         }
 
         return eventDetailData;

@@ -2,6 +2,7 @@ package com.example.tickview_mobile.ui.search;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -90,6 +91,9 @@ public class DetailTab1Fragment extends Fragment {
                 String buyTicketsText = buyTicketsUrl;
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(buyTicketsText);
 
+                ticketStatusTextView.setText(eventDetailData.getTicketStatus());
+                setTicketStatusBackground(ticketStatusTextView, eventDetailData.getTicketStatus());
+
                 // Set the URLSpan with your desired link
                 spannableStringBuilder.setSpan(new URLSpan(buyTicketsUrl), 0, buyTicketsText.length(), 0);
 
@@ -126,5 +130,39 @@ public class DetailTab1Fragment extends Fragment {
                 Glide.with(this).load(eventDetailData.getSeatMapUrl()).into(seatMapImageView);
             }
         }
+    }
+
+    private void setTicketStatusBackground(TextView textView, String statusCode) {
+        int backgroundColor;
+        int textColor = Color.WHITE;
+        int padding = 5;
+
+        switch (statusCode.toLowerCase()) {
+            case "onsale":
+                backgroundColor = Color.parseColor("#4CAF50");
+                break;
+            case "offsale":
+                backgroundColor = Color.RED;
+                break;
+            case "cancelled":
+                backgroundColor = Color.BLACK;
+                break;
+            case "postponed":
+            case "rescheduled":
+                backgroundColor = Color.parseColor("#FFA500"); // Orange color
+                break;
+            default:
+                backgroundColor = Color.TRANSPARENT;
+                textColor = Color.BLACK;
+                break;
+        }
+
+        GradientDrawable ticketStatusBackground = new GradientDrawable();
+        ticketStatusBackground.setColor(backgroundColor);
+        ticketStatusBackground.setCornerRadius(10); // You can adjust the corner radius as needed
+
+        textView.setBackground(ticketStatusBackground);
+        textView.setTextColor(textColor);
+        textView.setPadding(padding, padding, padding, padding);
     }
 }

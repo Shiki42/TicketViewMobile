@@ -103,8 +103,7 @@ public class ArtistDataAdapter extends RecyclerView.Adapter<ArtistDataAdapter.Ar
             artistName.setText(artistData.getName());
             followers.setText(String.format("%d followers", artistData.getFollowers()));
             Log.d("getSpotifyUrl", artistData.getSpotifyUrl());
-            spotifyUrl.setText(artistData.getSpotifyUrl());
-            Log.d("getPopularity", String.valueOf(artistData.getPopularity()));
+            spotifyUrl.setText("Check out on Spotify");
             progressView.setProgress(artistData.getPopularity());
             popularityNumber.setText(String.valueOf(artistData.getPopularity()));
 

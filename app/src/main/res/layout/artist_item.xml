@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    app:cardBackgroundColor="#000000"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -39,12 +40,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Artist Name"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/artist_followers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:text="Followers: 1234" />
 
                 <TextView
@@ -52,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="https://open.spotify.com/artist/12345"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/colorPrimary"
                     android:textColorLink="@color/black"
                     android:linksClickable="true" />
 
@@ -68,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Popularity"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/white" />
 
                 <FrameLayout
                     android:id="@+id/popularity_container"
@@ -82,7 +85,7 @@
                         android:layout_height="48dp"
                         app:cpb_progress="0"
                         app:cpb_progressbar_color="@color/red"
-                        app:cpb_background_progressbar_color="@color/white"
+                        app:cpb_background_progressbar_color="@color/black"
                         app:cpb_background_progressbar_width="5dp"
                         app:cpb_progressbar_width="5dp" />
 
@@ -91,6 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:textColor="@color/white"
                         android:text="88" />
 
                 </FrameLayout>
@@ -111,6 +115,7 @@
                 android:id="@+id/popular_albums_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="Popular Albums" />
 
             <LinearLayout

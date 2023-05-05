@@ -102,14 +102,35 @@ public class VolleyService {
     }
 
     public void searchEvent(String keyword, int distance, String category, String geoPoint, SearchEventCallback callback) {
-        String url = ServerConfig.SERVER_URL + "/events?keyword=" + encodeURIComponent(keyword) + "&distance=" + distance + "&category=" + encodeURIComponent(category) + "&geoPoint=" + encodeURIComponent(geoPoint);
+        String categoryId = convertCategoryToCategoryId(category);
+        String url = ServerConfig.SERVER_URL + "/events?keyword=" + encodeURIComponent(keyword) + "&distance=" + distance + "&category=" + encodeURIComponent(categoryId) + "&geoPoint=" + encodeURIComponent(geoPoint);
 
+        Log.d("EventUrl", ":" + url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, response -> {
                     callback.onSuccess(response);
                 }, error -> callback.onError(error.getMessage()));
 
         requestQueue.add(jsonObjectRequest);
+    }
+
+    private String convertCategoryToCategoryId(String category) {
+        switch (category) {
+            case "All":
+                return "";
+            case "Music":
+                return "music";
+            case "Sports":
+                return "sports";
+            case "Arts & Theatre":
+                return "arts";
+            case "Film":
+                return "film";
+            case "Miscellaneous":
+                return "misc";
+            default:
+                return "";
+        }
     }
 
     public void autoComplete(String keyword, ArrayAdapter<String> adapter, AutoCompleteCallback callback) {
@@ -159,7 +180,7 @@ public class VolleyService {
 
     public void fetchVenueDetails(String venueId, FetchVenueDetailsCallback callback) {
         String url = ServerConfig.SERVER_URL + "/venues?id=" + venueId;
-        Log.d("EventUrl", ":" + url);
+        //Log.d("EventUrl", ":" + url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null,
                         response -> {
